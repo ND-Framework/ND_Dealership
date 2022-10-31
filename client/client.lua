@@ -172,7 +172,7 @@ local function createVehicleCam(model, price)
     RemoveBlip(blip)
 end
 
-function getDealerVehicles(category)
+local function getDealerVehicles(category)
     local values = {}
     for _, categoryVeh in pairs(category) do
         local make = GetLabelText(GetMakeNameFromVehicleModel(categoryVeh.model))
@@ -186,7 +186,7 @@ function getDealerVehicles(category)
     return values
 end
 
-function getDealerMenu()
+local function getDealerMenu()
     local options = {}
     for category, vehicles in pairs(Config.vehicles) do
         options[#options+1] = {
