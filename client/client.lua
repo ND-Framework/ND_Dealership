@@ -90,6 +90,8 @@ local function createVehicleCam(model, price)
     PointCamAtCoord(cam, -44.38, -1098.05, 26.42)
     RenderScriptCams(true, true, 500, true, true)
 
+    FreezeEntityPosition(displayVehicle, true)
+    SetEntityCollision(vehicle, false, false)
     FreezeEntityPosition(cache.ped, true)
 
     while IsCamActive(cam) do
