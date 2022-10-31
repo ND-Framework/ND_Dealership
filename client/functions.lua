@@ -2,8 +2,10 @@ local random = math.random
 
 function spawnWorker(location)
     lib.requestModel(`cs_siemonyetarian`)
-    lib.requestAnimDict('anim@amb@casino@valet_scenario@pose_d@')
+    lib.requestModel(`prop_v_m_phone_01`)
+    lib.requestAnimDict('anim@amb@nightclub@peds@')
     local worker = CreatePed(4, `cs_siemonyetarian`, location.x, location.y, location.z - 0.8, location.w, false, false)
+    local bone = GetPedBoneIndex(worker, 28422)
 
     SetPedComponentVariation(worker, 3, 0, random(0, 1), 0) -- hands
 
@@ -17,6 +19,10 @@ function spawnWorker(location)
     SetPedConfigFlag(worker, 108, true)
     SetPedConfigFlag(worker, 208, true)
 
-    TaskPlayAnim(worker, 'anim@amb@casino@valet_scenario@pose_d@', 'base_a_m_y_vinewood_01', 2.0, 8.0, -1, 1, 0, false, false, false)
-    return worker
+    TaskPlayAnim(worker, 'anim@amb@nightclub@peds@', 'amb_world_human_leaning_male_wall_back_mobile_idle_a', 2.0, 8.0, -1, 1, 0, false, false, false)
+
+    local cellphone = CreateObject(`prop_v_m_phone_01`, 0.0, 0.0, 0.0, true, false, false)
+    AttachEntityToEntity(cellphone, worker, bone, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, true, true, false, false, 2, true)
+
+    return worker, cellphone
 end
