@@ -5,6 +5,7 @@ local pedCoords = vec3(0, 0, 0)
 local nearDealer = false
 local cam = 0
 local displayVehicle = 0
+local vehicle = 0
 local cellphone = 0
 local seed = math.randomseed
 local random = math.random
@@ -42,20 +43,22 @@ local function purchaseVehicle(model, price)
         if oldBalance >= price then
             TriggerServerEvent('ND_Dealership:purchaseVehicle', props, inGarage, price, method)
 
+            local newBalance = oldBalance - price
+
             lib.notify({
                 title = 'Vehicle Purchased',
                 position = 'top',
                 icon = 'car',
-                description = 'You purchased a ' .. labelName .. ' for $' .. price .. '! ' .. (inGarage and 'It has been sent to your garage.' or 'Spawning outside momentarily.'),
-                duration = 5000,
+                description = 'You purchased a ' .. labelName .. ' for $' .. price .. ' (' .. oldBalance .. ' -> ' .. newBalance .. ')! ' .. (inGarage and 'It has been sent to your garage.' or 'Spawning outside momentarily.'),
+                duration = 6000,
                 type = 'success'
             })
 
             if not inGarage then
                 seed(GetGameTimer())
                 local spawnVehicleCoords = Config.purchasedVehicleSpawns[random(1, #Config.purchasedVehicleSpawns)]
-                local vehicle = CreateVehicle(model, spawnVehicleCoords.x, spawnVehicleCoords.y, spawnVehicleCoords.z, spawnVehicleCoords.h, true, false)
-                SetVehicleNumberPlateText(vehicle, props.plate)
+                vehicle = CreateVehicle(model, spawnVehicleCoords.x, spawnVehicleCoords.y, spawnVehicleCoords.z, spawnVehicleCoords.h, true, false)
+                lib.setVehicleProperties(vehicle, props)
             end
         else
             lib.notify({
@@ -63,7 +66,7 @@ local function purchaseVehicle(model, price)
                 position = 'top',
                 icon = 'car',
                 description = 'You\'re short $' .. (price - oldBalance) .. ' to be able to purchase this vehicle.',
-                duration = 3000,
+                duration = 4500,
                 type = 'error'
             })
         end
@@ -97,7 +100,12 @@ local function createVehicleCam(model, price)
             icon = 'car'
         })
 
-        -- S key
+        lib.showTextUI('[A] Left View, [D] Right View, [S] Center View, [E] Exit, [ENTER] Purchase (Confirmation Dialog)', {
+            position = 'right-center',
+            icon = 'camera-retro'
+        })
+
+        -- S key (center cam, default)
         if IsControlJustPressed(0, 8) then
             cam = CreateCameraWithParams('DEFAULT_SCRIPTED_CAMERA', offset.x, offset.y, offset.z + 0.8, 0.0, 0.0, 0.0, 30.0, false, 2)
             SetCamActive(cam, true)
@@ -107,7 +115,7 @@ local function createVehicleCam(model, price)
             RenderScriptCams(true, true, 500, true, true)
         end
 
-        -- D key
+        -- D key (cam right)
         if IsControlJustPressed(0, 9) then
             cam = CreateCameraWithParams('DEFAULT_SCRIPTED_CAMERA', offset.x, offset.y + 5.0, offset.z + 0.8, 0.0, 0.0, 0.0, 30.0, false, 2)
             SetCamActive(cam, true)
@@ -115,7 +123,7 @@ local function createVehicleCam(model, price)
             RenderScriptCams(true, true, 500, true, true)
         end
 
-        -- A key
+        -- A key (cam left)
         if IsControlJustPressed(0, 34) then
             cam = CreateCameraWithParams('DEFAULT_SCRIPTED_CAMERA', offset.x, offset.y - 3.8, offset.z + 0.8, 0.0, 0.0, 0.0, 30.0, false, 2)
             SetCamActive(cam, true)
@@ -123,6 +131,7 @@ local function createVehicleCam(model, price)
             RenderScriptCams(true, true, 500, true, true)
         end
 
+        -- ENTER key (open purchase dialog)
         if IsControlJustPressed(0, 18) then
             SetCamActive(cam, false)
             RenderScriptCams(false, true, 500, true, true)
@@ -131,7 +140,7 @@ local function createVehicleCam(model, price)
             purchaseVehicle(model, price)
         end
 
-        -- E key
+        -- E key (exit cam)
         if IsControlJustPressed(0, 54) then
             SetCamActive(cam, false)
             RenderScriptCams(false, true, 500, true, true)
@@ -144,6 +153,21 @@ local function createVehicleCam(model, price)
     FreezeEntityPosition(cache.ped, false)
     dealerShown = false
     lib.hideTextUI()
+
+    local blip = AddBlipForEntity(vehicle)
+    SetBlipSprite(blip, 225)
+    SetBlipColour(blip, 3)
+    SetBlipScale(blip, 0.8)
+    SetBlipAsShortRange(blip, true)
+    BeginTextCommandSetBlipName('STRING')
+    AddTextComponentString('Purchased Car')
+    EndTextCommandSetBlipName(blip)
+
+    while cache.vehicle ~= vehicle do
+        Wait(250)
+    end
+
+    RemoveBlip(blip)
 end
 
 AddEventHandler('onResourceStart', function(resourceName)
@@ -272,6 +296,7 @@ CreateThread(function()
                     lib.showMenu('dealer_menu')
                 end
             else
+                if lib.getOpenMenu() ~= nil then lib.hideMenu(true) end
                 lib.hideTextUI()
                 sleep = 500
             end
