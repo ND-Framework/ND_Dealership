@@ -180,6 +180,9 @@ AddEventHandler('onResourceStart', function(resourceName)
         id = 'dealer_menu_compacts',
         title = 'Compacts',
         position = 'top-right',
+        onClose = function()
+            dealerShown = false
+        end,
         options = {
             { label = 'Compacts', icon = 'car', values = { 'Asbo', 'Blista', 'Brioso R/A', 'Dilettante', 'Issi', 'Panto', 'Prairie', 'Rhapsody' } },
         }
