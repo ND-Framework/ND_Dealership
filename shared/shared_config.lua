@@ -33,7 +33,7 @@ Config = {
             { model = `primo2`, price = 100 },
             { model = `regina`, price = 100 },
             { model = `romero`, price = 100 },
-            { model = `schafter`, price = 100 },
+            { model = `schafter2`, price = 100 },
             { model = `stafford`, price = 100 },
             { model = `stanier`, price = 100 },
             { model = `stratum`, price = 100 },
