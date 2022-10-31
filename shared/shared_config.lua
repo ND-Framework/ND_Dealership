@@ -1,4 +1,5 @@
 Config = {
+    testDriveEnabled = true, -- enables test-driving before purchasing.
     vehicles = {
         ["Compacts"] = {
             { model = `asbo`, price = 100 },

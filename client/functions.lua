@@ -29,3 +29,31 @@ function spawnWorker(location)
 
     return worker, cellphone
 end
+
+function getDealerVehicles(category)
+    local values = {}
+    for _, categoryVeh in pairs(category) do
+        local make = GetLabelText(GetMakeNameFromVehicleModel(categoryVeh.model))
+        local model = GetLabelText(GetDisplayNameFromVehicleModel(categoryVeh.model))
+        if make ~= "NULL" then
+            values[#values+1] = make .. " " .. model
+        else
+            values[#values+1] = model
+        end
+    end
+    return values
+end
+
+function getDealerMenu()
+    local options = {}
+
+    for category, vehicles in pairs(Config.vehicles) do
+        options[#options+1] = {
+            icon = 'car',
+            label = category,
+            values = getDealerVehicles(vehicles),
+            args = {category = category}
+        }
+    end
+    return options
+end

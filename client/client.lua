@@ -11,6 +11,65 @@ local random = math.random
 
 NDCore = exports["ND_Core"]:GetCoreObject()
 
+local function testDrive(model)
+    local labelName = GetLabelText(GetDisplayNameFromVehicleModel(model))
+    local testDriveSpawnCoords = vec3(-44.88, -1082.68, 26.69)
+    local testDriveVehicle = CreateVehicle(model, testDriveSpawnCoords.x, testDriveSpawnCoords.y, testDriveSpawnCoords.z, 67.59, true, false)
+    FreezeEntityPosition(cache.ped, false)
+    SetPedIntoVehicle(cache.ped, testDriveVehicle, -1)
+
+    lib.notify({
+        title = 'Test-Drive Started',
+        position = 'top',
+        icon = 'vial',
+        description = 'You are now test-driving a ' .. labelName .. ' for 30s (must go no further than 125m)',
+        duration = 5000,
+        type = 'success'
+    })
+
+    local tempTimer = GetGameTimer()
+
+    while true do
+        if GetGameTimer() - tempTimer > 30000 then
+            lib.notify({
+                title = 'Test-Drive Ended',
+                position = 'top',
+                icon = 'vial',
+                description = 'You have ended your test-drive of the ' .. labelName .. '.',
+                duration = 5000,
+                type = 'inform'
+            })
+            break
+        end
+
+        local testDriveVehicleCoords = GetEntityCoords(testDriveVehicle)
+        local distance = #(testDriveVehicleCoords - testDriveSpawnCoords)
+
+        if distance > 200.0 then
+            lib.notify({
+                title = 'Test-Drive Ended',
+                position = 'top',
+                icon = 'vial',
+                description = 'You have ended your test-drive of the ' .. labelName .. ', due to venturing outside of the test-drive area.',
+                duration = 5000,
+                type = 'inform'
+            })
+            break
+        end
+
+        Wait(0)
+    end
+
+
+    onTestDrive = false
+    testDriveVehicle = 0
+    testVehicleCoords = vec3(0, 0, 0)
+    distance = 0
+    SetEntityAsMissionEntity(testDriveVehicle, true, true)
+    DeleteVehicle(testDriveVehicle)
+    SetEntityCoords(cache.ped, -44.88, -1082.68, 26.69, false, false, false, false)
+end
+
 local function purchaseVehicle(model, price)
     local makeName = GetLabelText(GetMakeNameFromVehicleModel(model))
     local labelName = GetLabelText(GetDisplayNameFromVehicleModel(model))
@@ -76,6 +135,8 @@ end
 local function createVehicleCam(model, price)
     if not IsModelAVehicle(model) or not IsModelInCdimage(model) then return end
 
+    inCamView = true
+
     lib.requestModel(model)
 
     displayVehicle = CreateVehicle(model, -44.38, -1098.05, 26.42, 248.96, false, false)
@@ -134,6 +195,18 @@ local function createVehicleCam(model, price)
             purchaseVehicle(model, price)
         end
 
+        if Config.testDriveEnabled then
+            -- G key (test-drive)
+            if IsControlJustPressed(0, 113) then
+                SetCamActive(cam, false)
+                RenderScriptCams(false, true, 500, true, true)
+                DestroyCam(cam, false)
+                DeleteVehicle(displayVehicle)
+                inCamView = false
+                testDrive(model)
+            end
+        end
+
         -- E key (exit cam)
         if IsControlJustPressed(0, 54) then
             SetCamActive(cam, false)
@@ -146,49 +219,25 @@ local function createVehicleCam(model, price)
 
     FreezeEntityPosition(cache.ped, false)
     dealerShown = false
+    inCamView = false
     lib.hideTextUI()
 
-    local blip = AddBlipForEntity(vehicle)
-    SetBlipSprite(blip, 225)
-    SetBlipColour(blip, 3)
-    SetBlipScale(blip, 0.8)
-    SetBlipAsShortRange(blip, true)
-    BeginTextCommandSetBlipName('STRING')
-    AddTextComponentString('Purchased Car')
-    EndTextCommandSetBlipName(blip)
+    if vehicle ~= 0 then
+        local blip = AddBlipForEntity(vehicle)
+        SetBlipSprite(blip, 225)
+        SetBlipColour(blip, 3)
+        SetBlipScale(blip, 0.8)
+        SetBlipAsShortRange(blip, true)
+        BeginTextCommandSetBlipName('STRING')
+        AddTextComponentString('Purchased Car')
+        EndTextCommandSetBlipName(blip)
 
-    while cache.vehicle ~= vehicle do
-        Wait(250)
-    end
-
-    RemoveBlip(blip)
-end
-
-local function getDealerVehicles(category)
-    local values = {}
-    for _, categoryVeh in pairs(category) do
-        local make = GetLabelText(GetMakeNameFromVehicleModel(categoryVeh.model))
-        local model = GetLabelText(GetDisplayNameFromVehicleModel(categoryVeh.model))
-        if make ~= "NULL" then
-            values[#values+1] = make .. " " .. model
-        else
-            values[#values+1] = model
+        while cache.vehicle ~= vehicle do
+            Wait(250)
         end
-    end
-    return values
-end
 
-local function getDealerMenu()
-    local options = {}
-    for category, vehicles in pairs(Config.vehicles) do
-        options[#options+1] = {
-            icon = 'car',
-            label = category,
-            values = getDealerVehicles(vehicles),
-            args = {category = category}
-        }
+        RemoveBlip(blip)
     end
-    return options
 end
 
 AddEventHandler('onResourceStart', function(resourceName)
@@ -210,7 +259,6 @@ AddEventHandler('onResourceStart', function(resourceName)
                 createVehicleCam(Config.vehicles[args.category][i].model, Config.vehicles[args.category][i].price)
             end
         end
-
     end)
 
     local blip = AddBlipForCoord(workerLocation.x, workerLocation.y, workerLocation.z)
