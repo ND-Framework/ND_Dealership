@@ -100,6 +100,11 @@ local function createVehicleCam(model, price)
             icon = 'car'
         })
 
+        lib.showTextUI('[A] Left View, [D] Right View, [S] Center View, [E] Exit, [ENTER] Purchase (Confirmation Dialog)', {
+            position = 'right-center',
+            icon = 'camera-retro'
+        })
+
         -- S key (center cam, default)
         if IsControlJustPressed(0, 8) then
             cam = CreateCameraWithParams('DEFAULT_SCRIPTED_CAMERA', offset.x, offset.y, offset.z + 0.8, 0.0, 0.0, 0.0, 30.0, false, 2)
