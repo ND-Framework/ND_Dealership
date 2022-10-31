@@ -4,5 +4,5 @@ A vehicle-dealership for the ND Framework, directly integrated into ND Framework
 ## Features:
 * Direct integration into the ND_VehicleSystem addons.
 * View a car before you buy.
-* Ability to send to garage or spawn directly outside.
-* (MIGHT BE IMPLEMENTED) Test-Driving.
+* Ability to send to your personal-garage or spawn directly outside after purchase.
+* ***(MIGHT BE IMPLEMENTED)*** Test-Driving before purchase.
