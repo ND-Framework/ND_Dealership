@@ -13,6 +13,7 @@ local random = math.random
 NDCore = exports["ND_Core"]:GetCoreObject()
 
 local function purchaseVehicle(model, price)
+    local makeName = GetLabelText(GetMakeNameFromVehicleModel(model))
     local labelName = GetLabelText(GetDisplayNameFromVehicleModel(model))
 
     local input = lib.inputDialog('Purchase ' .. labelName .. ' for $' .. price .. '?', {
@@ -49,7 +50,7 @@ local function purchaseVehicle(model, price)
                 title = 'Vehicle Purchased',
                 position = 'top',
                 icon = 'car',
-                description = 'You purchased a ' .. labelName .. ' for $' .. price .. ' (' .. oldBalance .. ' -> ' .. newBalance .. ')! ' .. (inGarage and 'It has been sent to your garage.' or 'Spawning outside momentarily.'),
+                description = 'You purchased a '.. makeName .. ' ' .. labelName .. ' for $' .. price .. ' (' .. oldBalance .. ' -> ' .. newBalance .. '). ' .. (inGarage and 'It has been sent to your garage.' or 'Spawning outside momentarily.'),
                 duration = 6000,
                 type = 'success'
             })
