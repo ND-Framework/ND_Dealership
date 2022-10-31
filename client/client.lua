@@ -50,7 +50,7 @@ local function purchaseVehicle(model, price)
                 position = 'top',
                 icon = 'car',
                 description = 'You purchased a ' .. labelName .. ' for $' .. price .. ' (' .. oldBalance .. ' -> ' .. newBalance .. ')! ' .. (inGarage and 'It has been sent to your garage.' or 'Spawning outside momentarily.'),
-                duration = 5000,
+                duration = 6000,
                 type = 'success'
             })
 
@@ -66,7 +66,7 @@ local function purchaseVehicle(model, price)
                 position = 'top',
                 icon = 'car',
                 description = 'You\'re short $' .. (price - oldBalance) .. ' to be able to purchase this vehicle.',
-                duration = 3000,
+                duration = 4500,
                 type = 'error'
             })
         end
