@@ -296,6 +296,7 @@ CreateThread(function()
                     lib.showMenu('dealer_menu')
                 end
             else
+                if lib.getOpenMenu() ~= nil then lib.hideMenu(true) end
                 lib.hideTextUI()
                 sleep = 500
             end
