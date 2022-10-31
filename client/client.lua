@@ -2,7 +2,6 @@ local workerLocation = vec4(-33.17, -1100.59, 26.42, 68.77)
 local worker = 0
 local dealerShown = false
 local pedCoords = vec3(0, 0, 0)
-local nearDealer = false
 local cam = 0
 local displayVehicle = 0
 local vehicle = 0
@@ -95,18 +94,10 @@ local function createVehicleCam(model, price)
     SetEntityCollision(vehicle, false, false)
     FreezeEntityPosition(cache.ped, true)
 
+    lib.showTextUI('[A] Left View  \n[D] Right View  \n[S] Center View  \n[E] Exit  \n[ENTER] Purchase ($' .. price .. ')')
+
     while IsCamActive(cam) do
         Wait(0)
-
-        lib.showTextUI('($' .. price .. ') ' .. GetLabelText(GetDisplayNameFromVehicleModel(model)), {
-            position = 'top-center',
-            icon = 'car'
-        })
-
-        lib.showTextUI('[A] Left View, [D] Right View, [S] Center View, [E] Exit, [ENTER] Purchase (Confirmation Dialog)', {
-            position = 'right-center',
-            icon = 'camera-retro'
-        })
 
         -- S key (center cam, default)
         if IsControlJustPressed(0, 8) then
@@ -269,14 +260,13 @@ CreateThread(function()
 end)
 
 CreateThread(function()
-    local sleep = 0
-
+    local sleep = 500
+    local notified = false
     while true do
-        nearDealer = false
+        local nearDealer = false
         local dist = #(pedCoords - vec3(workerLocation.x, workerLocation.y, workerLocation.z))
 
         if dist <= 80.0 then
-            nearDealer = true
 
             if worker == 0 then
                 worker, cellphone = spawnWorker(workerLocation)
@@ -284,28 +274,31 @@ CreateThread(function()
             end
 
             if dist < 1.5 then
+                nearDealer = true
+
                 sleep = 0
 
-                if not dealerShown then
+                if not dealerShown or not notified then
+                    notified = true
                     lib.showTextUI('[E] - Open Dealer Menu', {
                         icon = 'car'
                     })
-                else
-                    lib.hideTextUI()
                 end
 
                 if not dealerShown and IsControlJustPressed(0, 54) then
                     dealerShown = true
+                    lib.hideTextUI()
                     lib.showMenu('dealer_menu')
                 end
             else
                 if lib.getOpenMenu() ~= nil then lib.hideMenu(true) end
-                lib.hideTextUI()
+                if notified then
+                    notified = false
+                    lib.hideTextUI()
+                end
                 sleep = 500
             end
-        end
-
-        if not nearDealer and worker ~= 0 then
+        elseif worker ~= 0 then
             print('Deleting dealership worker: ' .. worker)
             DeletePed(worker)
             worker = 0
