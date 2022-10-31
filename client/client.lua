@@ -5,6 +5,7 @@ local pedCoords = vec3(0, 0, 0)
 local nearDealer = false
 local cam = 0
 local displayVehicle = 0
+local vehicle = 0
 local cellphone = 0
 local seed = math.randomseed
 local random = math.random
@@ -54,8 +55,7 @@ local function purchaseVehicle(model, price)
             if not inGarage then
                 seed(GetGameTimer())
                 local spawnVehicleCoords = Config.purchasedVehicleSpawns[random(1, #Config.purchasedVehicleSpawns)]
-                local vehicle = CreateVehicle(model, spawnVehicleCoords.x, spawnVehicleCoords.y, spawnVehicleCoords.z, spawnVehicleCoords.h, true, false)
-                SetVehicleNumberPlateText(vehicle, props.plate)
+                vehicle = CreateVehicle(model, spawnVehicleCoords.x, spawnVehicleCoords.y, spawnVehicleCoords.z, spawnVehicleCoords.h, true, false)
                 lib.setVehicleProperties(vehicle, props)
             end
         else
@@ -145,6 +145,21 @@ local function createVehicleCam(model, price)
     FreezeEntityPosition(cache.ped, false)
     dealerShown = false
     lib.hideTextUI()
+
+    local blip = AddBlipForEntity(vehicle)
+    SetBlipSprite(blip, 225)
+    SetBlipColour(blip, 3)
+    SetBlipScale(blip, 0.8)
+    SetBlipAsShortRange(blip, true)
+    BeginTextCommandSetBlipName('STRING')
+    AddTextComponentString('Purchased Car')
+    EndTextCommandSetBlipName(blip)
+
+    while cache.vehicle ~= vehicle do
+        Wait(250)
+    end
+
+    RemoveBlip(blip)
 end
 
 AddEventHandler('onResourceStart', function(resourceName)
