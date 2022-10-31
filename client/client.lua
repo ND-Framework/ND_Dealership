@@ -43,11 +43,13 @@ local function purchaseVehicle(model, price)
         if oldBalance >= price then
             TriggerServerEvent('ND_Dealership:purchaseVehicle', props, inGarage, price, method)
 
+            local newBalance = oldBalance - price
+
             lib.notify({
                 title = 'Vehicle Purchased',
                 position = 'top',
                 icon = 'car',
-                description = 'You purchased a ' .. labelName .. ' for $' .. price .. '! ' .. (inGarage and 'It has been sent to your garage.' or 'Spawning outside momentarily.'),
+                description = 'You purchased a ' .. labelName .. ' for $' .. price .. ' (' .. oldBalance .. ' -> ' .. newBalance .. ')! ' .. (inGarage and 'It has been sent to your garage.' or 'Spawning outside momentarily.'),
                 duration = 5000,
                 type = 'success'
             })
@@ -98,7 +100,7 @@ local function createVehicleCam(model, price)
             icon = 'car'
         })
 
-        -- S key
+        -- S key (center cam, default)
         if IsControlJustPressed(0, 8) then
             cam = CreateCameraWithParams('DEFAULT_SCRIPTED_CAMERA', offset.x, offset.y, offset.z + 0.8, 0.0, 0.0, 0.0, 30.0, false, 2)
             SetCamActive(cam, true)
@@ -108,7 +110,7 @@ local function createVehicleCam(model, price)
             RenderScriptCams(true, true, 500, true, true)
         end
 
-        -- D key
+        -- D key (cam right)
         if IsControlJustPressed(0, 9) then
             cam = CreateCameraWithParams('DEFAULT_SCRIPTED_CAMERA', offset.x, offset.y + 5.0, offset.z + 0.8, 0.0, 0.0, 0.0, 30.0, false, 2)
             SetCamActive(cam, true)
@@ -116,7 +118,7 @@ local function createVehicleCam(model, price)
             RenderScriptCams(true, true, 500, true, true)
         end
 
-        -- A key
+        -- A key (cam left)
         if IsControlJustPressed(0, 34) then
             cam = CreateCameraWithParams('DEFAULT_SCRIPTED_CAMERA', offset.x, offset.y - 3.8, offset.z + 0.8, 0.0, 0.0, 0.0, 30.0, false, 2)
             SetCamActive(cam, true)
@@ -124,6 +126,7 @@ local function createVehicleCam(model, price)
             RenderScriptCams(true, true, 500, true, true)
         end
 
+        -- ENTER key (open purchase dialog)
         if IsControlJustPressed(0, 18) then
             SetCamActive(cam, false)
             RenderScriptCams(false, true, 500, true, true)
@@ -132,7 +135,7 @@ local function createVehicleCam(model, price)
             purchaseVehicle(model, price)
         end
 
-        -- E key
+        -- E key (exit cam)
         if IsControlJustPressed(0, 54) then
             SetCamActive(cam, false)
             RenderScriptCams(false, true, 500, true, true)
