@@ -1,0 +1,21 @@
+fx_version 'cerulean'
+game 'gta5'
+
+lua54 'yes'
+use_experimental_fxv2_oal 'yes'
+
+client_scripts {
+    '@ox_lib/init.lua',
+    'client/functions.lua',
+    'client/client.lua'
+}
+
+shared_script 'shared/shared_config.lua'
+
+server_script 'server.lua'
+
+dependencies {
+    'ND_Core',
+    'ND_VehicleSystem',
+    'ox_lib'
+}
