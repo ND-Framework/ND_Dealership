@@ -1,6 +1,6 @@
 Config = {
     vehicles = {
-        compacts = {
+        ["Compacts"] = {
             { model = `asbo`, price = 100 },
             { model = `blista`, price = 100 },
             { model = `brioso`, price = 100 },
@@ -17,7 +17,7 @@ Config = {
             { model = `weevil`, price = 100 },
             { model = `weevil`, price = 100 }
         },
-        sedans = {
+        ["Sedans"] = {
             { model = `asea`, price = 100 },
             { model = `asterope`, price = 100 },
             { model = `cog55`, price = 100 },
@@ -44,7 +44,7 @@ Config = {
             { model = `warrener`, price = 100 },
             { model = `washington`, price = 100 }
         },
-        suvs = {
+        ["SUVs"] = {
             { model = `baller`, price = 100 },
             { model = `baller2`, price = 100 },
             { model = `baller3`, price = 100 },
@@ -75,7 +75,7 @@ Config = {
             { model = `toros`, price = 100 },
             { model = `xls`, price = 100 }
         },
-        coupes = {
+        ["Coupes"] = {
             { model = `cogcabrio`, price = 100 },
             { model = `exemplar`, price = 100 },
             { model = `f620`, price = 100 },
@@ -94,7 +94,7 @@ Config = {
             { model = ``, price = 100 },
             { model = ``, price = 100 },
         },
-        muscle = {
+        ["Muscle"] = {
             { model = `blade`, price = 100 },
             { model = `buccaneer`, price = 100 },
             { model = `buccaneer2`, price = 100 },
@@ -146,7 +146,7 @@ Config = {
             { model = `yosemite`, price = 100 },
             { model = `yosemite2`, price = 100 }
         },
-        classics = {
+        ["Classics"] = {
             { model = `btype`, price = 100 },
             { model = `btype2`, price = 100 },
             { model = `btype3`, price = 100 },
@@ -184,7 +184,7 @@ Config = {
             { model = `zion3`, price = 100 },
             { model = `ztype`, price = 100 }
         },
-        sports = {
+        ["Sports"] = {
             { model = `alpha`, price = 100 },
             { model = `banshee`, price = 100 },
             { model = `bestiagts`, price = 100 },
@@ -260,7 +260,7 @@ Config = {
             { model = `verlierer2`, price = 100 },
             { model = `vstr`, price = 100 },
         },
-        super = {
+        ["super"] = {
             { model = `adder`, price = 100 },
             { model = `autarch`, price = 100 },
             { model = `banshee2`, price = 100 },
@@ -307,7 +307,7 @@ Config = {
             { model = `zentorno`, price = 100 },
             { model = `zorrusso`, price = 100 }
         },
-        motorcycles = {
+        ["Motorcycles"] = {
             { model = `akuma`, price = 100 },
             { model = `avarus`, price = 100 },
             { model = `bagger`, price = 100 },
@@ -356,7 +356,7 @@ Config = {
             { model = `zombiea`, price = 100 },
             { model = `zombieb`, price = 100 }
         },
-        offroad = {
+        ["Off-Road"] = {
             { model = `bfinjection`, price = 100 },
             { model = `bifta`, price = 100 },
             { model = `blazer`, price = 100 },
@@ -386,7 +386,7 @@ Config = {
             { model = `guardian`, price = 100 },
             { model = `sadler`, price = 100 }
         },
-        vans = {
+        ["Vans"] = {
             { model = `bison`, price = 100 },
             { model = `bobcatxl`, price = 100 },
             { model = `burrito3`, price = 100 },
@@ -399,7 +399,7 @@ Config = {
             { model = `youga`, price = 100 },
             { model = `youga2`, price = 100 }
         },
-        cycles = {
+        ["Cycles"] = {
             { model = `bmx`, price = 100 },
             { model = `cruiser`, price = 100 },
             { model = `fixter`, price = 100 },
