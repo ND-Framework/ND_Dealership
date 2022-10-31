@@ -172,6 +172,33 @@ local function createVehicleCam(model, price)
     RemoveBlip(blip)
 end
 
+function getDealerVehicles(category)
+    local values = {}
+    for _, categoryVeh in pairs(category) do
+        local make = GetLabelText(GetMakeNameFromVehicleModel(categoryVeh.model))
+        local model = GetLabelText(GetDisplayNameFromVehicleModel(categoryVeh.model))
+        if make ~= "NULL" then
+            values[#values+1] = make .. " " .. model
+        else
+            values[#values+1] = model
+        end
+    end
+    return values
+end
+
+function getDealerMenu()
+    local options = {}
+    for category, vehicles in pairs(Config.vehicles) do
+        options[#options+1] = {
+            icon = 'car',
+            label = category,
+            values = getDealerVehicles(vehicles),
+            args = {category = category}
+        }
+    end
+    return options
+end
+
 AddEventHandler('onResourceStart', function(resourceName)
     if cache.resource ~= resourceName then return end
 
@@ -182,43 +209,16 @@ AddEventHandler('onResourceStart', function(resourceName)
         onClose = function()
             dealerShown = false
         end,
-        options = {
-            { icon = 'car', label = 'Compacts', args = 'compacts' },
-            { icon = 'car', label = 'Sedans', args = 'sedans' },
-            { icon = 'car', label = 'SUVs', args = 'suvs' },
-            { icon = 'car', label = 'Coupes', args = 'coupes' },
-            { icon = 'car', label = 'Muscle', args = 'muscle' },
-            { icon = 'car', label = 'Sports Classics', args = 'sportsclassics' },
-            { icon = 'car', label = 'Sports', args = 'sports' },
-            { icon = 'car', label = 'Super', args = 'super' },
-            { icon = 'car', label = 'Motorcycles', args = 'motorcycles' },
-            { icon = 'car', label = 'Off-Road', args = 'offroad' }
-        }
-    }, function(_, _, args)
-        if args == 'compacts' then
-            lib.showMenu('dealer_menu_compacts')
-        elseif args == 'coupes' then
-            lib.showMenu('dealer_menu_coupes')
-        end
-    end)
+        options = getDealerMenu()
+    }, function(_, scrollIndex, args)
 
-    lib.registerMenu({
-        id = 'dealer_menu_compacts',
-        title = 'Compacts',
-        position = 'top-right',
-        onClose = function()
-            dealerShown = false
-        end,
-        options = {
-            { label = 'Compacts', icon = 'car', values = { 'Asbo', 'Blista', 'Brioso R/A', 'Dilettante', 'Issi', 'Panto', 'Prairie', 'Rhapsody' } },
-        }
-    }, function(_, scrollIndex, _)
-        for i = 1, #Config.vehicles.compacts do
+        for i = 1, #Config.vehicles[args.category] do
             if i == scrollIndex then
                 lib.hideMenu()
-                createVehicleCam(Config.vehicles.compacts[i].model, Config.vehicles.compacts[i].price)
+                createVehicleCam(Config.vehicles[args.category][i].model, Config.vehicles[args.category][i].price)
             end
         end
+
     end)
 
     local blip = AddBlipForCoord(workerLocation.x, workerLocation.y, workerLocation.z)
