@@ -56,6 +56,7 @@ local function purchaseVehicle(model, price)
                 local spawnVehicleCoords = Config.purchasedVehicleSpawns[random(1, #Config.purchasedVehicleSpawns)]
                 local vehicle = CreateVehicle(model, spawnVehicleCoords.x, spawnVehicleCoords.y, spawnVehicleCoords.z, spawnVehicleCoords.h, true, false)
                 SetVehicleNumberPlateText(vehicle, props.plate)
+                lib.setVehicleProperties(vehicle, props)
             end
         else
             lib.notify({
