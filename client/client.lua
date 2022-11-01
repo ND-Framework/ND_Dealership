@@ -108,7 +108,7 @@ local function purchaseVehicle(model, price)
         local inGarage = input[2]
 
         if method == nil then return end
-        if inGarage == nil then store = false end
+        if inGarage == nil then inGarage = false end
 
         local tempVeh = CreateVehicle(model, 0.0, 0.0, 0.0, 0.0, false, false)
         local props = lib.getVehicleProperties(tempVeh)
@@ -167,8 +167,8 @@ local function createVehicleCam(model, price)
     RenderScriptCams(true, true, 650, true, true)
 
     FreezeEntityPosition(displayVehicle, true)
-    SetEntityCollision(vehicle, false, false)
     FreezeEntityPosition(cache.ped, true)
+    SetEntityCollision(displayVehicle, false, false)
 
     lib.showTextUI('[A] Left View  \n[D] Right View  \n[W] Center View  \n[S] Rear View  ' .. (Config.testDriveEnabled and '\n[G] Test-Drive' or ' ') .. '  \n[E] Exit  \n[ENTER] Purchase ($' .. price .. ')')
 
@@ -213,6 +213,8 @@ local function createVehicleCam(model, price)
             RenderScriptCams(false, true, 650, true, true)
             DestroyCam(cam, false)
             DeleteVehicle(displayVehicle)
+            FreezeEntityPosition(cache.ped, false)
+            lib.hideTextUI()
             purchaseVehicle(model, price)
         end
 
@@ -223,6 +225,7 @@ local function createVehicleCam(model, price)
                 RenderScriptCams(false, true, 900, true, true)
                 DestroyCam(cam, false)
                 DeleteVehicle(displayVehicle)
+                FreezeEntityPosition(cache.ped, false)
                 inCamView = false
                 testDrive(model)
             end
@@ -234,6 +237,7 @@ local function createVehicleCam(model, price)
             RenderScriptCams(false, true, 650, true, true)
             DestroyCam(cam, false)
             SetEntityAsMissionEntity(displayVehicle, true, true)
+            FreezeEntityPosition(cache.ped, false)
             DeleteVehicle(displayVehicle)
         end
     end

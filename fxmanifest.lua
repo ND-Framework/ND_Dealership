@@ -19,7 +19,6 @@ server_script 'server/server.lua'
 
 dependencies {
     'ND_Core',
-    '/server:2372',
     'ND_VehicleSystem',
     'ox_lib'
 }
