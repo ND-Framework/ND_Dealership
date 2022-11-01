@@ -167,8 +167,6 @@ local function createVehicleCam(model, price)
             SetCamActive(cam, true)
             PointCamAtCoord(cam, -44.38, -1098.05, 26.42)
             RenderScriptCams(true, true, 500, true, true)
-            PointCamAtCoord(cam, -44.38, -1098.05, 26.42)
-            RenderScriptCams(true, true, 500, true, true)
         end
 
         -- W key (center cam, default)
