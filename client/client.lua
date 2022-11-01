@@ -156,7 +156,7 @@ local function createVehicleCam(model, price)
     SetEntityCollision(vehicle, false, false)
     FreezeEntityPosition(cache.ped, true)
 
-    lib.showTextUI('[A] Left View  \n[D] Right View  \n[S] Center View  \n[E] Exit  \n[ENTER] Purchase ($' .. price .. ')')
+    lib.showTextUI('[A] Left View  \n[D] Right View  \n[S] Center View  ' .. (Config.testDriveEnabled and '\n[G] Test-Drive' or ' ') .. '  \n[E] Exit  \n[ENTER] Purchase ($' .. price .. ')')
 
     while IsCamActive(cam) do
         Wait(0)
