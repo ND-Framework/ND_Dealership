@@ -5,7 +5,6 @@ local pedCoords = vec3(0, 0, 0)
 local cam = 0
 local displayVehicle = 0
 local testDriveVehicle = 0
-local vehicle = 0
 local cellphone = 0
 
 NDCore = exports.ND_Core:GetCoreObject()
@@ -36,6 +35,8 @@ local function testDrive(model)
 
     Wait(2000)
 
+    lib.showTextUI('[E] End Test-Drive')
+
     local tempTimer = GetGameTimer()
 
     while true do
@@ -45,6 +46,19 @@ local function testDrive(model)
                 position = 'top',
                 icon = 'vial',
                 description = 'Your test-drive of the ' .. makeName .. ' ' .. labelName .. ' has ended.',
+                duration = 5000,
+                type = 'inform'
+            })
+            break
+        end
+
+        -- E key (end test-drive)
+        if IsControlJustPressed(0, 54) then
+            lib.notify({
+                title = 'Test-Drive Ended',
+                position = 'top',
+                icon = 'vial',
+                description = 'You\'ve prematurely ended your test-drive of the ' .. makeName .. ' ' .. labelName .. '.',
                 duration = 5000,
                 type = 'inform'
             })
@@ -80,6 +94,8 @@ local function testDrive(model)
 
         Wait(0)
     end
+
+    lib.hideTextUI()
 
     SetEntityAsMissionEntity(testDriveVehicle, true, true)
     DeleteVehicle(testDriveVehicle)
@@ -149,13 +165,11 @@ end
 local function createVehicleCam(model, price)
     if not IsModelAVehicle(model) or not IsModelInCdimage(model) then return end
 
-    inCamView = true
-
     lib.requestModel(model)
 
     displayVehicle = CreateVehicle(model, -44.38, -1098.05, 26.42, 248.96, false, false)
     repeat Wait(0) until DoesEntityExist(displayVehicle)
-    ClearArea(-44.38, -1098.05, 26.42, 5.0, true, false, true, false)
+    ClearArea(-44.38, -1098.05, 26.42, 10.0, true, false, true, false)
     SetVehicleNumberPlateText(displayVehicle, 'DEALER')
     SetVehicleNumberPlateTextIndex(displayVehicle, 4)
     SetModelAsNoLongerNeeded(model)
@@ -224,9 +238,9 @@ local function createVehicleCam(model, price)
                 SetCamActive(cam, false)
                 RenderScriptCams(false, true, 900, true, true)
                 DestroyCam(cam, false)
+                SetEntityAsMissionEntity(displayVehicle, true, true)
                 DeleteVehicle(displayVehicle)
                 FreezeEntityPosition(cache.ped, false)
-                inCamView = false
                 testDrive(model)
             end
         end
@@ -244,7 +258,7 @@ local function createVehicleCam(model, price)
 
     FreezeEntityPosition(cache.ped, false)
     dealerShown = false
-    inCamView = false
+    cam = 0
     displayVehicle = 0
     lib.hideTextUI()
 end
@@ -285,30 +299,30 @@ AddEventHandler('onResourceStop', function(resourceName)
 
     lib.hideMenu()
     lib.hideTextUI()
-    if worker ~= 0 then
+    if worker > 0 then
         print('Deleting dealership worker: ' .. worker)
         DeletePed(worker)
     end
 
-    if displayVehicle ~= 0 then
+    if displayVehicle > 0 then
         print('Deleting display vehicle: ' .. displayVehicle)
         DeleteVehicle(displayVehicle)
     end
 
-    if cam ~= 0 then
+    if cam > 0 then
         print('Destroying camera: ' .. cam)
         SetCamActive(cam, false)
         RenderScriptCams(false, true, 500, true, true)
         DestroyCam(cam, false)
     end
 
-    if cellphone ~= 0 then
+    if cellphone > 0 then
         print('Deleting cellphone: ' .. cellphone)
         SetEntityAsMissionEntity(cellphone, true, true)
         DeleteObject(cellphone)
     end
 
-    if testDriveVehicle ~= 0 then
+    if testDriveVehicle > 0 then
         print('Deleting test-drive vehicle: ' .. testDriveVehicle)
         SetEntityAsMissionEntity(testDriveVehicle, true, true)
         DeleteVehicle(testDriveVehicle)
@@ -358,7 +372,7 @@ CreateThread(function()
                 end
                 sleep = 500
             end
-        elseif worker ~= 0 then
+        elseif worker > 0 then
             print('Deleting dealership worker: ' .. worker)
             DeletePed(worker)
             worker = 0
