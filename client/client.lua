@@ -11,6 +11,7 @@ local cellphone = 0
 NDCore = exports.ND_Core:GetCoreObject()
 
 local function testDrive(model)
+    local makeName = GetLabelText(GetMakeNameFromVehicleModel(model))
     local labelName = GetLabelText(GetDisplayNameFromVehicleModel(model))
     local testDriveSpawnCoords = vec3(-44.88, -1082.68, 26.69)
     testDriveVehicle = CreateVehicle(model, testDriveSpawnCoords.x, testDriveSpawnCoords.y, testDriveSpawnCoords.z, 67.59, true, false)
@@ -22,7 +23,7 @@ local function testDrive(model)
         title = 'Test-Drive Started',
         position = 'top',
         icon = 'vial',
-        description = 'You are now test-driving a ' .. labelName .. ' for ' .. Config.testDriveTime ..'s (test-drive radius is ' .. Config.testDriveRadius .. ').',
+        description = 'You are now test-driving the ' .. makeName ..' ' .. labelName .. ' for ' .. Config.testDriveTime ..'s (test-drive radius is ' .. Config.testDriveRadius .. ').',
         duration = 5000,
         type = 'inform'
     })
@@ -37,7 +38,7 @@ local function testDrive(model)
                 title = 'Test-Drive Ended',
                 position = 'top',
                 icon = 'vial',
-                description = 'Your test-drive of the ' .. labelName .. ' has ended.',
+                description = 'Your test-drive of the ' .. makeName .. ' ' .. labelName .. ' has ended.',
                 duration = 5000,
                 type = 'inform'
             })
@@ -49,7 +50,7 @@ local function testDrive(model)
                 title = 'Test-Drive Ended',
                 position = 'top',
                 icon = 'vial',
-                description = 'You have ended your test-drive of the ' .. labelName .. ', due to exiting the vehicle.',
+                description = 'You have ended your test-drive of the ' .. makeName .. ' ' .. labelName .. ', due to exiting the vehicle.',
                 duration = 5000,
                 type = 'inform'
             })
@@ -64,7 +65,7 @@ local function testDrive(model)
                 title = 'Test-Drive Ended',
                 position = 'top',
                 icon = 'vial',
-                description = 'You have ended your test-drive of the ' .. labelName .. ', due to venturing outside of the test-drive area (' .. Config.testDriveRadius .. ').',
+                description = 'You have ended your test-drive of the ' .. makeName .. ' ' .. labelName .. ', due to venturing outside of the test-drive area (' .. Config.testDriveRadius .. ').',
                 duration = 5000,
                 type = 'inform'
             })
