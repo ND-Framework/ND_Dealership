@@ -245,26 +245,26 @@ local function createVehicleCam(model, price)
     lib.hideTextUI()
 end
 
+lib.registerMenu({
+    id = 'dealer_menu',
+    title = 'Dealer Menu',
+    position = 'top-right',
+    onClose = function()
+        dealerShown = false
+    end,
+    options = getDealerMenu()
+}, function(_, scrollIndex, args)
+
+    for i = 1, #Config.vehicles[args.category] do
+        if i == scrollIndex then
+            lib.hideMenu()
+            createVehicleCam(Config.vehicles[args.category][i].model, Config.vehicles[args.category][i].price)
+        end
+    end
+end)
+
 AddEventHandler('onResourceStart', function(resourceName)
     if cache.resource ~= resourceName then return end
-
-    lib.registerMenu({
-        id = 'dealer_menu',
-        title = 'Dealer Menu',
-        position = 'top-right',
-        onClose = function()
-            dealerShown = false
-        end,
-        options = getDealerMenu()
-    }, function(_, scrollIndex, args)
-
-        for i = 1, #Config.vehicles[args.category] do
-            if i == scrollIndex then
-                lib.hideMenu()
-                createVehicleCam(Config.vehicles[args.category][i].model, Config.vehicles[args.category][i].price)
-            end
-        end
-    end)
 
     local blip = AddBlipForCoord(workerLocation.x, workerLocation.y, workerLocation.z)
     SetBlipSprite(blip, 523)
