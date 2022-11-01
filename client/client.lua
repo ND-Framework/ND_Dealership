@@ -6,8 +6,6 @@ local cam = 0
 local displayVehicle = 0
 local vehicle = 0
 local cellphone = 0
-local seed = math.randomseed
-local random = math.random
 
 NDCore = exports["ND_Core"]:GetCoreObject()
 
@@ -100,7 +98,7 @@ local function purchaseVehicle(model, price)
         local oldBalance = method == 'cash' and selectedCharacter.cash or selectedCharacter.bank
 
         if oldBalance >= price then
-            TriggerServerEvent('ND_Dealership:purchaseVehicle', props, inGarage, price, method)
+            TriggerServerEvent('ND_Dealership:purchaseVehicle', props, inGarage, method)
 
             local newBalance = oldBalance - price
 
@@ -112,13 +110,6 @@ local function purchaseVehicle(model, price)
                 duration = 6000,
                 type = 'success'
             })
-
-            if not inGarage then
-                seed(GetGameTimer())
-                local spawnVehicleCoords = Config.purchasedVehicleSpawns[random(1, #Config.purchasedVehicleSpawns)]
-                vehicle = CreateVehicle(model, spawnVehicleCoords.x, spawnVehicleCoords.y, spawnVehicleCoords.z, spawnVehicleCoords.h, true, false)
-                lib.setVehicleProperties(vehicle, props)
-            end
         else
             lib.notify({
                 title = 'Insufficent Funds',
