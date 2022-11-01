@@ -156,17 +156,25 @@ local function createVehicleCam(model, price)
     SetEntityCollision(vehicle, false, false)
     FreezeEntityPosition(cache.ped, true)
 
-    lib.showTextUI('[A] Left View  \n[D] Right View  \n[S] Center View  ' .. (Config.testDriveEnabled and '\n[G] Test-Drive' or ' ') .. '  \n[E] Exit  \n[ENTER] Purchase ($' .. price .. ')')
+    lib.showTextUI('[A] Left View  \n[D] Right View  \n[W] Center View  \n[S] Rear View  ' .. (Config.testDriveEnabled and '\n[G] Test-Drive' or ' ') .. '  \n[E] Exit  \n[ENTER] Purchase ($' .. price .. ')')
 
     while IsCamActive(cam) do
         Wait(0)
 
-        -- S key (center cam, default)
+        -- S key (rear cam)
         if IsControlJustPressed(0, 8) then
-            cam = CreateCameraWithParams('DEFAULT_SCRIPTED_CAMERA', offset.x, offset.y, offset.z + 0.8, 0.0, 0.0, 0.0, 30.0, false, 2)
+            cam = CreateCameraWithParams('DEFAULT_SCRIPTED_CAMERA', offset.x - 15.0, offset.y + 5.6, offset.z + 0.8, 0.0, 0.0, 0.0, 30.0, false, 2)
             SetCamActive(cam, true)
             PointCamAtCoord(cam, -44.38, -1098.05, 26.42)
             RenderScriptCams(true, true, 500, true, true)
+            PointCamAtCoord(cam, -44.38, -1098.05, 26.42)
+            RenderScriptCams(true, true, 500, true, true)
+        end
+
+        -- W key (center cam, default)
+        if IsControlJustPressed(0, 32) then
+            cam = CreateCameraWithParams('DEFAULT_SCRIPTED_CAMERA', offset.x, offset.y, offset.z + 0.8, 0.0, 0.0, 0.0, 30.0, false, 2)
+            SetCamActive(cam, true)
             PointCamAtCoord(cam, -44.38, -1098.05, 26.42)
             RenderScriptCams(true, true, 500, true, true)
         end
