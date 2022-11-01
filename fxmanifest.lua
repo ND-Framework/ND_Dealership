@@ -9,7 +9,8 @@ description 'A dealership for ND-Framework.'
 
 client_scripts {
     '@ox_lib/init.lua',
-    'client/*.lua',
+    'client/functions.lua',
+    'client/client.lua'
 }
 
 shared_script 'shared/shared_config.lua'
