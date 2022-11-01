@@ -21,7 +21,7 @@ RegisterNetEvent('ND_Dealership:purchaseVehicle', function(props, inGarage, meth
     if not price or (player[method] < price) then return end
     NDCore.Functions.DeductMoney(price, source, method)
 
-    local vehid = exports.ND_VehicleSystem:setVehicleOwned(source, props, inGarage)
+    local vehid = exports.ND_VehicleSystem:setVehicleOwned(source, props, true)
     if not inGarage then
         local spawnVehicleCoords = Config.purchasedVehicleSpawns[random(1, #Config.purchasedVehicleSpawns)]
         exports.ND_VehicleSystem:spawnOwnedVehicle(source, vehid, spawnVehicleCoords)
