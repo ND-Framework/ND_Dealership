@@ -141,6 +141,7 @@ local function createVehicleCam(model, price)
 
     displayVehicle = CreateVehicle(model, -44.38, -1098.05, 26.42, 248.96, false, false)
     repeat Wait(0) until DoesEntityExist(displayVehicle)
+    ClearArea(-44.38, -1098.05, 26.42, 5.0, true, false, true, false)
     SetVehicleNumberPlateText(displayVehicle, 'DEALER')
     SetVehicleNumberPlateTextIndex(displayVehicle, 4)
     SetModelAsNoLongerNeeded(model)
