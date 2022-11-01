@@ -237,23 +237,6 @@ local function createVehicleCam(model, price)
     inCamView = false
     displayVehicle = 0
     lib.hideTextUI()
-
-    if vehicle ~= 0 then
-        local blip = AddBlipForEntity(vehicle)
-        SetBlipSprite(blip, 225)
-        SetBlipColour(blip, 3)
-        SetBlipScale(blip, 0.8)
-        SetBlipAsShortRange(blip, true)
-        BeginTextCommandSetBlipName('STRING')
-        AddTextComponentString('Purchased Car')
-        EndTextCommandSetBlipName(blip)
-
-        while cache.vehicle ~= vehicle do
-            Wait(250)
-        end
-
-        RemoveBlip(blip)
-    end
 end
 
 AddEventHandler('onResourceStart', function(resourceName)
