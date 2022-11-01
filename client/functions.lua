@@ -35,8 +35,8 @@ function getDealerVehicles(category)
     for _, categoryVeh in pairs(category) do
         local make = GetLabelText(GetMakeNameFromVehicleModel(categoryVeh.model))
         local model = GetLabelText(GetDisplayNameFromVehicleModel(categoryVeh.model))
-        if make ~= "NULL" then
-            values[#values+1] = make .. " " .. model
+        if make ~= 'NULL' then
+            values[#values+1] = make .. ' ' .. model
         else
             values[#values+1] = model
         end

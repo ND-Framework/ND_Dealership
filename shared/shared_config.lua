@@ -1,5 +1,7 @@
 Config = {
     testDriveEnabled = true, -- enables test-driving before purchasing.
+    testDriveTime = 45, -- amount of time IN SECONDS that test-drivers get alloted.
+    testDriveRadius = 250.0, -- radius around the dealership that test-drivers can be in (will end the test-drive if they venture outside this value, 250 is a good start).
     purchasedVehicleSpawns = {
         { x = -10.04, y = -1097.03, z = 26.67, h = 95.32 },
         { x = -1099.68, y = 26.67, z = 26.67, h = 101.85 },

@@ -4,15 +4,17 @@ local dealerShown = false
 local pedCoords = vec3(0, 0, 0)
 local cam = 0
 local displayVehicle = 0
+local testDriveVehicle = 0
 local vehicle = 0
 local cellphone = 0
 
-NDCore = exports["ND_Core"]:GetCoreObject()
+NDCore = exports.ND_Core:GetCoreObject()
 
 local function testDrive(model)
     local labelName = GetLabelText(GetDisplayNameFromVehicleModel(model))
     local testDriveSpawnCoords = vec3(-44.88, -1082.68, 26.69)
-    local testDriveVehicle = CreateVehicle(model, testDriveSpawnCoords.x, testDriveSpawnCoords.y, testDriveSpawnCoords.z, 67.59, true, false)
+    testDriveVehicle = CreateVehicle(model, testDriveSpawnCoords.x, testDriveSpawnCoords.y, testDriveSpawnCoords.z, 67.59, true, false)
+    SetVehicleEngineOn(testDriveVehicle, true, true, true)
     FreezeEntityPosition(cache.ped, false)
     SetPedIntoVehicle(cache.ped, testDriveVehicle, -1)
 
@@ -20,20 +22,34 @@ local function testDrive(model)
         title = 'Test-Drive Started',
         position = 'top',
         icon = 'vial',
-        description = 'You are now test-driving a ' .. labelName .. ' for 30s (must go no further than 125m)',
+        description = 'You are now test-driving a ' .. labelName .. ' for ' .. Config.testDriveTime ..'s (test-drive radius is ' .. Config.testDriveRadius .. ').',
         duration = 5000,
-        type = 'success'
+        type = 'inform'
     })
+
+    Wait(2000)
 
     local tempTimer = GetGameTimer()
 
     while true do
-        if GetGameTimer() - tempTimer > 30000 then
+        if GetGameTimer() - tempTimer > Config.testDriveTime * 1000 then
             lib.notify({
                 title = 'Test-Drive Ended',
                 position = 'top',
                 icon = 'vial',
-                description = 'You have ended your test-drive of the ' .. labelName .. '.',
+                description = 'Your test-drive of the ' .. labelName .. ' has ended.',
+                duration = 5000,
+                type = 'inform'
+            })
+            break
+        end
+
+        if cache.vehicle ~= testDriveVehicle then
+            lib.notify({
+                title = 'Test-Drive Ended',
+                position = 'top',
+                icon = 'vial',
+                description = 'You have ended your test-drive of the ' .. labelName .. ', due to exiting the vehicle.',
                 duration = 5000,
                 type = 'inform'
             })
@@ -43,12 +59,12 @@ local function testDrive(model)
         local testDriveVehicleCoords = GetEntityCoords(testDriveVehicle)
         local distance = #(testDriveVehicleCoords - testDriveSpawnCoords)
 
-        if distance > 200.0 then
+        if distance > Config.testDriveRadius then
             lib.notify({
                 title = 'Test-Drive Ended',
                 position = 'top',
                 icon = 'vial',
-                description = 'You have ended your test-drive of the ' .. labelName .. ', due to venturing outside of the test-drive area.',
+                description = 'You have ended your test-drive of the ' .. labelName .. ', due to venturing outside of the test-drive area (' .. Config.testDriveRadius .. ').',
                 duration = 5000,
                 type = 'inform'
             })
@@ -58,14 +74,14 @@ local function testDrive(model)
         Wait(0)
     end
 
+    SetEntityAsMissionEntity(testDriveVehicle, true, true)
+    DeleteVehicle(testDriveVehicle)
+    SetEntityCoords(cache.ped, -44.88, -1082.68, 26.69, false, false, false, false)
 
     onTestDrive = false
     testDriveVehicle = 0
     testVehicleCoords = vec3(0, 0, 0)
     distance = 0
-    SetEntityAsMissionEntity(testDriveVehicle, true, true)
-    DeleteVehicle(testDriveVehicle)
-    SetEntityCoords(cache.ped, -44.88, -1082.68, 26.69, false, false, false, false)
 end
 
 local function purchaseVehicle(model, price)
@@ -218,6 +234,7 @@ local function createVehicleCam(model, price)
     FreezeEntityPosition(cache.ped, false)
     dealerShown = false
     inCamView = false
+    displayVehicle = 0
     lib.hideTextUI()
 
     if vehicle ~= 0 then
@@ -285,7 +302,7 @@ AddEventHandler('onResourceStop', function(resourceName)
     end
 
     if cam ~= 0 then
-        print('Destroying camera' .. cam)
+        print('Destroying camera: ' .. cam)
         SetCamActive(cam, false)
         RenderScriptCams(false, true, 500, true, true)
         DestroyCam(cam, false)
@@ -295,6 +312,12 @@ AddEventHandler('onResourceStop', function(resourceName)
         print('Deleting cellphone: ' .. cellphone)
         SetEntityAsMissionEntity(cellphone, true, true)
         DeleteObject(cellphone)
+    end
+
+    if testDriveVehicle ~= 0 then
+        print('Deleting test-drive vehicle: ' .. testDriveVehicle)
+        SetEntityAsMissionEntity(testDriveVehicle, true, true)
+        DeleteVehicle(testDriveVehicle)
     end
 end)
 
@@ -308,20 +331,17 @@ end)
 CreateThread(function()
     local sleep = 500
     local notified = false
+
     while true do
-        local nearDealer = false
         local dist = #(pedCoords - vec3(workerLocation.x, workerLocation.y, workerLocation.z))
 
         if dist <= 80.0 then
-
             if worker == 0 then
                 worker, cellphone = spawnWorker(workerLocation)
                 print('Spawning dealership worker: ' .. worker)
             end
 
             if dist < 1.5 then
-                nearDealer = true
-
                 sleep = 0
 
                 if not dealerShown or not notified then
