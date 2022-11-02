@@ -10,7 +10,7 @@ local cellphone = 0
 NDCore = exports.ND_Core:GetCoreObject()
 
 local function testDrive(model)
-    local makeName = GetLabelText(GetMakeNameFromVehicleModel(model))
+    local makeName = GetLabelText(GetMakeNameFromVehicleModel(model)) ~= 'NULL' or ''
     local labelName = GetLabelText(GetDisplayNameFromVehicleModel(model))
     local testDriveSpawnCoords = vec3(-44.88, -1082.68, 26.69)
     testDriveVehicle = CreateVehicle(model, testDriveSpawnCoords.x, testDriveSpawnCoords.y, testDriveSpawnCoords.z, 67.59, true, false)
@@ -108,7 +108,7 @@ local function testDrive(model)
 end
 
 local function purchaseVehicle(model, price)
-    local makeName = GetLabelText(GetMakeNameFromVehicleModel(model))
+    local makeName = GetLabelText(GetMakeNameFromVehicleModel(model)) ~= 'NULL' or ''
     local labelName = GetLabelText(GetDisplayNameFromVehicleModel(model))
 
     local input = lib.inputDialog('Purchase ' .. labelName .. ' for $' .. price .. '?', {
@@ -145,7 +145,7 @@ local function purchaseVehicle(model, price)
                 title = 'Vehicle Purchased',
                 position = 'top',
                 icon = 'car',
-                description = 'You purchased a '.. makeName .. ' ' .. labelName .. ' for $' .. price .. ' (' .. oldBalance .. ' -> ' .. newBalance .. '). ' .. (inGarage and 'It has been sent to your garage.' or 'Spawning outside momentarily.'),
+                description = 'You purchased a '.. makeName .. ' ' .. labelName .. ' for $' .. price .. ' (' .. oldBalance .. ' -> ' .. newBalance .. '). ' .. (inGarage and 'It has been sent to your garage.' or 'It has spawned outside.'),
                 duration = 6000,
                 type = 'success'
             })
@@ -154,7 +154,7 @@ local function purchaseVehicle(model, price)
                 title = 'Insufficent Funds',
                 position = 'top',
                 icon = 'car',
-                description = 'You\'re short $' .. (price - oldBalance) .. ' to be able to purchase this vehicle.',
+                description = 'You\'re short $' .. (price - oldBalance) .. ' to be able to purchase the ' .. makeName .. ' ' .. labelName .. '.',
                 duration = 4500,
                 type = 'error'
             })
