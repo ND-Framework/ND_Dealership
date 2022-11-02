@@ -31,9 +31,12 @@ local function cleanupVehicleCam()
 end
 
 local function testDrive(model)
-    local makeName = GetLabelText(GetMakeNameFromVehicleModel(model)) ~= 'NULL' or ''
+    local makeName = GetLabelText(GetMakeNameFromVehicleModel(model))
     local labelName = GetLabelText(GetDisplayNameFromVehicleModel(model))
     local testDriveSpawnCoords = vec3(-44.88, -1082.68, 26.69)
+
+    if makeName == 'NULL' then makeName = '' end
+
     testDriveVehicle = CreateVehicle(model, testDriveSpawnCoords.x, testDriveSpawnCoords.y, testDriveSpawnCoords.z, 67.59, true, false)
     repeat Wait(0) until DoesEntityExist(testDriveVehicle)
     SetVehRadioStation(testDriveVehicle, 'OFF')
@@ -128,8 +131,10 @@ local function testDrive(model)
 end
 
 local function purchaseVehicle(model, price)
-    local makeName = GetLabelText(GetMakeNameFromVehicleModel(model)) ~= 'NULL' or ''
+    local makeName = GetLabelText(GetMakeNameFromVehicleModel(model))
     local labelName = GetLabelText(GetDisplayNameFromVehicleModel(model))
+
+    if makeName == 'NULL' then makeName = '' end
 
     local input = lib.inputDialog('Purchase ' .. labelName .. ' for $' .. price .. '?', {
         { type = 'select', label = 'Method Of Pay', options = {
@@ -174,7 +179,7 @@ local function purchaseVehicle(model, price)
                 title = 'Insufficent Funds',
                 position = 'top',
                 icon = 'car',
-                description = 'You\'re short $' .. (price - oldBalance) .. ' to be able to purchase the ' .. makeName .. ' ' .. labelName .. '.',
+                description = 'You\'re short $' .. (price - oldBalance) .. ' to afford the ' .. makeName .. ' ' .. labelName .. '.',
                 duration = 4500,
                 type = 'error'
             })
