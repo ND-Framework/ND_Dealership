@@ -3,16 +3,17 @@ Config = {
     testDriveTime = 45, -- amount of time IN SECONDS that test-drivers get alloted.
     testDriveRadius = 250.0, -- radius around the dealership that test-drivers can be in (will end the test-drive if they venture outside this value, 250 is a good start).
     purchasedVehicleSpawns = {
-        { x = -10.04, y = -1097.03, z = 26.67, h = 95.32 },
-        { x = -1099.68, y = 26.67, z = 26.67, h = 101.85 },
-        { x = -11.19, y = - 1102.31, z = 26.67, h = 98.27 },
-        { x = -12.36, y = -1105.39, z = 26.67, h = 90.4 },
-        { x = -13.22, y = -1108.02, z = 26.67, h = 98.16 },
-        { x = -8.23, y = -1081.57, z = 26.67, h = 123.45 },
-        { x = -11, y = -1080.15, z = 26.68, h = 123.23 },
-        { x = -50.72, y = -1116.8, z = 26.43, h = 359.99 },
-        { x = -53.57, y = -1116.43, z = 26.43, h = 2.93 },
-        { x = -56.29, y = -1116.76, z = 26.43, h = 2.59 }
+        vector4(-14.16, -1108.17, 26.20, 282.01),
+        vector4(-12.82, -1105.19, 26.20, 282.08),
+        vector4(-11.70, -1102.36, 26.20, 280.18),
+        vector4(-10.60, -1099.58, 26.20, 280.60),
+        vector4(-9.77, -1096.74, 26.20, 280.28),
+        vector4(-8.10, -1081.52, 26.21, 124.82),
+        vector4(-11.14, -1080.48, 26.20, 125.45),
+        vector4(-47.71, -1116.63, 25.96, 1.28),
+        vector4(-50.64, -1116.85, 25.96, 1.26),
+        vector4(-53.53, -1116.77, 25.96, 0.48),
+        vector4(-56.33, -1116.96, 25.96, 2.03)
     },
     vehicles = {
         ["Compacts"] = {
