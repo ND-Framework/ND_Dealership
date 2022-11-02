@@ -80,15 +80,41 @@ function getDealerVehicles(category)
     return values
 end
 
+
+function pairsByKeys(t, f)
+    local a = {}
+    for n in pairs(t) do table.insert(a, n) end
+    table.sort(a, f)
+    local i = 0
+    local iter = function ()
+        i = i + 1
+        if a[i] == nil then
+            return nil
+        else
+            return a[i], t[a[i]]
+        end
+    end
+    return iter
+end
+
+function sort(tableToSort)
+    local t = {}
+    for k, v in pairsByKeys(tableToSort) do
+        table.insert(t, {category = k, vehicles = v})
+    end
+    return t
+end
+
 function getDealerMenu()
     local options = {}
+    local vehiclesTable = sort(Config.vehicles)
 
-    for category, vehicles in pairs(Config.vehicles) do
+    for _, vehiclesStuff in pairs(vehiclesTable) do
         options[#options+1] = {
             icon = 'car',
-            label = category,
-            values = getDealerVehicles(vehicles),
-            args = {category = category}
+            label = vehiclesStuff.category,
+            values = getDealerVehicles(vehiclesStuff.vehicles),
+            args = {category = vehiclesStuff.category}
         }
     end
     return options
