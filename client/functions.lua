@@ -32,14 +32,23 @@ end
 
 function getDealerVehicles(category)
     local values = {}
+
     for _, categoryVeh in pairs(category) do
         local make = GetLabelText(GetMakeNameFromVehicleModel(categoryVeh.model))
         local model = GetLabelText(GetDisplayNameFromVehicleModel(categoryVeh.model))
+
+        if not IsModelInCdimage(categoryVeh.model) or not IsModelAVehicle(categoryVeh.model) then
+            print('^3Hash: ' .. categoryVeh.model .. ' - ' .. (model ~= 'NULL' and model .. ' ' or '') .. 'isn\'t in the game\'s CD image or isn\'t a vehicle. If this is a valid vehicle model hash you may need to update your server\'s game build. Skipping^0.')
+            goto skip
+        end
+
         if make ~= 'NULL' then
             values[#values+1] = make .. ' ' .. model
         else
             values[#values+1] = model
         end
+
+        :: skip ::
     end
     return values
 end
