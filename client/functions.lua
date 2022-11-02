@@ -24,10 +24,37 @@ function spawnWorker(location)
     local cellphone = CreateObject(`prop_v_m_phone_01`, 0.0, 0.0, 0.0, true, false, false)
     AttachEntityToEntity(cellphone, worker, bone, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, true, true, false, false, 2, true)
 
+    RemoveAnimDict('anim@amb@nightclub@peds@')
     SetModelAsNoLongerNeeded(`cs_siemonyetarian`)
     SetModelAsNoLongerNeeded(`prop_v_m_phone_01`)
 
     return worker, cellphone
+end
+
+function spawnClonePed()
+    local dummyPed = ClonePed(cache.ped, true, false, true)
+    lib.requestModel(`prop_cs_tablet`)
+    lib.requestAnimDict('amb@code_human_in_bus_passenger_idles@female@tablet@base')
+
+    SetPedCanBeTargetted(dummyPed, false)
+    SetPedCanRagdoll(dummyPed, false)
+    SetEntityCanBeDamaged(dummyPed, false)
+    SetBlockingOfNonTemporaryEvents(dummyPed, true)
+    SetPedCanRagdollFromPlayerImpact(dummyPed, false)
+    SetPedResetFlag(dummyPed, 249, true)
+    SetPedConfigFlag(dummyPed, 185, true)
+    SetPedConfigFlag(dummyPed, 108, true)
+    SetPedConfigFlag(dummyPed, 208, true)
+
+    local bone = GetPedBoneIndex(dummyPed, 26610)
+    local tablet = CreateObject(`prop_cs_tablet`, 0.0, 0.0, 0.0, true, false, false)
+    AttachEntityToEntity(tablet, dummyPed, bone, 0.15, -0.03, 0.0075, 180.0, -20.0, 0.0, true, false, false, false, 2, true)
+    TaskPlayAnim(dummyPed, 'amb@code_human_in_bus_passenger_idles@female@tablet@base', 'base', 8.0, 8.0, -1, 49, 0, false, false, false)
+
+    RemoveAnimDict('amb@code_human_in_bus_passenger_idles@female@tablet@base')
+    SetModelAsNoLongerNeeded(`prop_cs_tablet`)
+
+    return dummyPed, tablet
 end
 
 function getDealerVehicles(category)

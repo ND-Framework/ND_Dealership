@@ -6,8 +6,29 @@ local cam = 0
 local displayVehicle = 0
 local testDriveVehicle = 0
 local cellphone = 0
+local tablet = 0
+local dummyPed = 0
 
 NDCore = exports.ND_Core:GetCoreObject()
+
+local function cleanupVehicleCam()
+    SetEntityHeading(cache.ped, 255.23)
+    SetEntityCollision(cache.ped, true, true)
+    FreezeEntityPosition(cache.ped, false)
+    Wait(500)
+    SetEntityVisible(cache.ped, true, true)
+    DeleteVehicle(displayVehicle)
+    DeletePed(dummyPed)
+    SetEntityAsMissionEntity(tablet, true, true)
+    DeleteObject(tablet)
+
+    lib.hideTextUI()
+    dealerShown = false
+    cam = 0
+    tablet = 0
+    dummyPed = 0
+    displayVehicle = 0
+end
 
 local function testDrive(model)
     local makeName = GetLabelText(GetMakeNameFromVehicleModel(model)) ~= 'NULL' or ''
@@ -15,8 +36,6 @@ local function testDrive(model)
     local testDriveSpawnCoords = vec3(-44.88, -1082.68, 26.69)
     testDriveVehicle = CreateVehicle(model, testDriveSpawnCoords.x, testDriveSpawnCoords.y, testDriveSpawnCoords.z, 67.59, true, false)
     repeat Wait(0) until DoesEntityExist(testDriveVehicle)
-    SetVehicleRadioEnabled(testDriveVehicle, true)
-    Wait(100)
     SetVehRadioStation(testDriveVehicle, 'OFF')
     SetVehicleNumberPlateText(testDriveVehicle, 'DEALER')
     SetVehicleNumberPlateTextIndex(testDriveVehicle, 4)
@@ -99,7 +118,8 @@ local function testDrive(model)
 
     SetEntityAsMissionEntity(testDriveVehicle, true, true)
     DeleteVehicle(testDriveVehicle)
-    SetEntityCoords(cache.ped, -44.88, -1082.68, 26.69, false, false, false, false)
+    SetEntityCoords(cache.ped, -40.51, -1080.91, 26.63, false, false, false, false)
+    SetEntityHeading(cache.ped, 72.07)
 
     onTestDrive = false
     testDriveVehicle = 0
@@ -163,8 +183,6 @@ local function purchaseVehicle(model, price)
 end
 
 local function createVehicleCam(model, price)
-    if not IsModelAVehicle(model) or not IsModelInCdimage(model) then return end
-
     lib.requestModel(model)
 
     displayVehicle = CreateVehicle(model, -44.38, -1098.05, 26.42, 248.96, false, false)
@@ -180,8 +198,12 @@ local function createVehicleCam(model, price)
     PointCamAtCoord(cam, -44.38, -1098.05, 26.42)
     RenderScriptCams(true, true, 650, true, true)
 
-    FreezeEntityPosition(displayVehicle, true)
+    dummyPed, tablet = spawnClonePed()
+    SetEntityHeading(dummyPed, 255.23)
+    SetEntityVisible(cache.ped, false, false)
     FreezeEntityPosition(cache.ped, true)
+    FreezeEntityPosition(displayVehicle, true)
+    SetEntityCollision(cache.ped, false, false)
     SetEntityCollision(displayVehicle, false, false)
 
     lib.showTextUI('[A] Left View  \n[D] Right View  \n[W] Center View  \n[S] Rear View  ' .. (Config.testDriveEnabled and '\n[G] Test-Drive' or ' ') .. '  \n[E] Exit  \n[ENTER] Purchase ($' .. price .. ')')
@@ -226,9 +248,7 @@ local function createVehicleCam(model, price)
             SetCamActive(cam, false)
             RenderScriptCams(false, true, 650, true, true)
             DestroyCam(cam, false)
-            DeleteVehicle(displayVehicle)
-            FreezeEntityPosition(cache.ped, false)
-            lib.hideTextUI()
+            cleanupVehicleCam()
             purchaseVehicle(model, price)
         end
 
@@ -236,11 +256,9 @@ local function createVehicleCam(model, price)
             -- G key (test-drive)
             if IsControlJustPressed(0, 113) then
                 SetCamActive(cam, false)
-                RenderScriptCams(false, true, 900, true, true)
+                RenderScriptCams(false, true, 1000, true, true)
                 DestroyCam(cam, false)
-                SetEntityAsMissionEntity(displayVehicle, true, true)
-                DeleteVehicle(displayVehicle)
-                FreezeEntityPosition(cache.ped, false)
+                cleanupVehicleCam()
                 testDrive(model)
             end
         end
@@ -250,17 +268,9 @@ local function createVehicleCam(model, price)
             SetCamActive(cam, false)
             RenderScriptCams(false, true, 650, true, true)
             DestroyCam(cam, false)
-            SetEntityAsMissionEntity(displayVehicle, true, true)
-            FreezeEntityPosition(cache.ped, false)
-            DeleteVehicle(displayVehicle)
+            cleanupVehicleCam()
         end
     end
-
-    FreezeEntityPosition(cache.ped, false)
-    dealerShown = false
-    cam = 0
-    displayVehicle = 0
-    lib.hideTextUI()
 end
 
 lib.registerMenu({
@@ -326,6 +336,17 @@ AddEventHandler('onResourceStop', function(resourceName)
         print('Deleting test-drive vehicle: ' .. testDriveVehicle)
         SetEntityAsMissionEntity(testDriveVehicle, true, true)
         DeleteVehicle(testDriveVehicle)
+    end
+
+    if dummyPed > 0 then
+        print('Deleting dummy ped: ' .. dummyPed)
+        DeletePed(dummyPed)
+    end
+
+    if tablet > 0 then
+        print('Deleting tablet: ' .. tablet)
+        SetEntityAsMissionEntity(tablet, true, true)
+        DeleteObject(tablet)
     end
 end)
 
