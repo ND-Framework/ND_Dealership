@@ -23,7 +23,6 @@ RegisterNetEvent('ND_Dealership:purchaseVehicle', function(props, inGarage, meth
 
     local vehid = exports.ND_VehicleSystem:setVehicleOwned(source, props, true)
     if not inGarage then
-        local spawnVehicleCoords = Config.purchasedVehicleSpawns[random(1, #Config.purchasedVehicleSpawns)]
-        exports.ND_VehicleSystem:spawnOwnedVehicle(source, vehid, spawnVehicleCoords)
+        exports.ND_VehicleSystem:spawnOwnedVehicle(source, vehid, Config.purchasedVehicleSpawns)
     end
 end)
