@@ -1,4 +1,6 @@
 local random = math.random
+local seed = math.randomseed
+local time = os.time
 
 NDCore = exports.ND_Core:GetCoreObject()
 
@@ -26,4 +28,20 @@ RegisterNetEvent('ND_Dealership:purchaseVehicle', function(props, inGarage, meth
         local spawnVehicleCoords = Config.purchasedVehicleSpawns[random(1, #Config.purchasedVehicleSpawns)]
         exports.ND_VehicleSystem:spawnOwnedVehicle(source, vehid, spawnVehicleCoords)
     end
+end)
+
+RegisterNetEvent('ND_Dealership:setTestDriveBucket', function(returnToDefaultBucket, netId)
+    local source = source
+    local bucket = 0
+
+    if not returnToDefaultBucket then
+        seed(time())
+        bucket = random(1, 100)
+    else
+        bucket = bucket
+    end
+
+    SetPlayerRoutingBucket(source, tonumber(bucket))
+
+    print(GetPlayerRoutingBucket(source))
 end)

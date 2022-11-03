@@ -2,20 +2,18 @@ local workerLocation = vec4(-33.17, -1100.59, 26.42, 68.77)
 local worker = 0
 local dealerShown = false
 local pedCoords = vec3(0, 0, 0)
-local cam = 0
 local displayVehicle = 0
 local testDriveVehicle = 0
 local cellphone = 0
 local tablet = 0
 local dummyPed = 0
+local vehicleView = false
 
 NDCore = exports.ND_Core:GetCoreObject()
 
-local function cleanupVehicleCam()
+local function cleanupVehicleView(returnCoords)
     SetEntityHeading(cache.ped, 255.23)
-    SetEntityCollision(cache.ped, true, true)
-    FreezeEntityPosition(cache.ped, false)
-    Wait(500)
+    SetEntityCoords(cache.ped, returnCoords.x, returnCoords.y, returnCoords.z - 1.0, false, false, false, false)
     SetEntityVisible(cache.ped, true, true)
     DeleteVehicle(displayVehicle)
     DeletePed(dummyPed)
@@ -24,7 +22,6 @@ local function cleanupVehicleCam()
 
     lib.hideTextUI()
     dealerShown = false
-    cam = 0
     tablet = 0
     dummyPed = 0
     displayVehicle = 0
@@ -37,8 +34,13 @@ local function testDrive(model)
 
     if makeName == 'NULL' then makeName = '' end
 
-    testDriveVehicle = CreateVehicle(model, testDriveSpawnCoords.x, testDriveSpawnCoords.y, testDriveSpawnCoords.z, 67.59, true, false)
+    TriggerServerEvent('ND_Dealership:setTestDriveBucket', false)
+
+    Wait(500)
+
+    testDriveVehicle = CreateVehicle(model, testDriveSpawnCoords.x, testDriveSpawnCoords.y, testDriveSpawnCoords.z, 67.59, true, true)
     repeat Wait(0) until DoesEntityExist(testDriveVehicle)
+
     SetVehRadioStation(testDriveVehicle, 'OFF')
     SetVehicleNumberPlateText(testDriveVehicle, 'DEALER')
     SetVehicleNumberPlateTextIndex(testDriveVehicle, 4)
@@ -57,7 +59,7 @@ local function testDrive(model)
 
     Wait(2000)
 
-    lib.showTextUI('[E] End Test-Drive')
+    lib.showTextUI('[F] End Test-Drive')
 
     local tempTimer = GetGameTimer()
 
@@ -74,8 +76,8 @@ local function testDrive(model)
             break
         end
 
-        -- E key (end test-drive)
-        if IsControlJustPressed(0, 54) then
+        -- F key (end test-drive)
+        if IsControlJustPressed(0, 49) then
             lib.notify({
                 title = 'Test-Drive Ended',
                 position = 'top',
@@ -116,6 +118,8 @@ local function testDrive(model)
 
         Wait(0)
     end
+
+    TriggerServerEvent('ND_Dealership:setTestDriveBucket', true)
 
     lib.hideTextUI()
 
@@ -187,7 +191,7 @@ local function purchaseVehicle(model, price)
     end
 end
 
-local function createVehicleCam(model, price)
+local function createVehicleView(model, price)
     lib.requestModel(model)
 
     displayVehicle = CreateVehicle(model, -44.38, -1098.05, 26.42, 248.96, false, false)
@@ -197,83 +201,63 @@ local function createVehicleCam(model, price)
     SetVehicleNumberPlateTextIndex(displayVehicle, 4)
     SetModelAsNoLongerNeeded(model)
 
-    local offset = GetOffsetFromEntityInWorldCoords(displayVehicle, 0.0, 6.0, 0.0)
-    cam = CreateCameraWithParams('DEFAULT_SCRIPTED_CAMERA', offset.x, offset.y, offset.z + 0.8, 0.0, 0.0, 0.0, 30.0, false, 2)
-    SetCamActive(cam, true)
-    PointCamAtCoord(cam, -44.38, -1098.05, 26.42)
-    RenderScriptCams(true, true, 650, true, true)
+    local returnCoords = GetEntityCoords(cache.ped)
 
     dummyPed, tablet = spawnClonePed()
     SetEntityHeading(dummyPed, 255.23)
     SetEntityVisible(cache.ped, false, false)
-    FreezeEntityPosition(cache.ped, true)
     FreezeEntityPosition(displayVehicle, true)
-    SetEntityCollision(cache.ped, false, false)
+    SetVehicleEngineOn(displayVehicle, true, true, true)
+    SetVehRadioStation(displayVehicle, 'OFF')
+    SetPedIntoVehicle(cache.ped, displayVehicle, -1)
     SetEntityCollision(displayVehicle, false, false)
+    SetGameplayCamRelativeRotation(180.0, 20.0, 120.0)
+    SetGameplayCamRelativeHeading(155.0)
+    vehicleView = true
 
-    lib.showTextUI('[A] Left View  \n[D] Right View  \n[W] Center View  \n[S] Rear View  ' .. (Config.testDriveEnabled and '\n[G] Test-Drive' or ' ') .. '  \n[E] Exit  \n[ENTER] Purchase ($' .. price .. ')')
+    lib.showTextUI('[ENTER] Purchase ($' .. price .. ')  ' .. (Config.testDriveEnabled and '\n[G] Test-Drive' or ' ') .. '  \n[F] Exit')
 
-    while IsCamActive(cam) do
+    while vehicleView do
         Wait(0)
 
-        -- S key (rear cam)
-        if IsControlJustPressed(0, 8) then
-            cam = CreateCameraWithParams('DEFAULT_SCRIPTED_CAMERA', offset.x - 15.0, offset.y + 5.6, offset.z + 0.8, 0.0, 0.0, 0.0, 30.0, false, 2)
-            SetCamActive(cam, true)
-            PointCamAtCoord(cam, -44.38, -1098.05, 26.42)
-            RenderScriptCams(true, true, 650, true, true)
-        end
+        DisableControlAction(1, 0, true) -- V: change view
+        DisableControlAction(1, 80, true) -- R: cinematic cam
+        DisableControlAction(1, 75, true) -- F: Vehicle exit
 
-        -- W key (center cam, default)
-        if IsControlJustPressed(0, 32) then
-            cam = CreateCameraWithParams('DEFAULT_SCRIPTED_CAMERA', offset.x, offset.y, offset.z + 0.8, 0.0, 0.0, 0.0, 30.0, false, 2)
-            SetCamActive(cam, true)
-            PointCamAtCoord(cam, -44.38, -1098.05, 26.42)
-            RenderScriptCams(true, true, 650, true, true)
-        end
-
-        -- D key (cam right)
-        if IsControlJustPressed(0, 9) then
-            cam = CreateCameraWithParams('DEFAULT_SCRIPTED_CAMERA', offset.x, offset.y + 5.0, offset.z + 0.8, 0.0, 0.0, 0.0, 30.0, false, 2)
-            SetCamActive(cam, true)
-            PointCamAtCoord(cam, -44.38, -1098.05, 26.42)
-            RenderScriptCams(true, true, 650, true, true)
-        end
-
-        -- A key (cam left)
-        if IsControlJustPressed(0, 34) then
-            cam = CreateCameraWithParams('DEFAULT_SCRIPTED_CAMERA', offset.x, offset.y - 3.8, offset.z + 0.8, 0.0, 0.0, 0.0, 30.0, false, 2)
-            SetCamActive(cam, true)
-            PointCamAtCoord(cam, -44.38, -1098.05, 26.42)
-            RenderScriptCams(true, true, 650, true, true)
-        end
-
-        -- ENTER key (open purchase dialog)
-        if IsControlJustPressed(0, 18) then
-            SetCamActive(cam, false)
-            RenderScriptCams(false, true, 650, true, true)
-            DestroyCam(cam, false)
-            cleanupVehicleCam()
-            purchaseVehicle(model, price)
+        -- V key change view
+        if IsDisabledControlJustPressed(0, 0) then
+            local viewTypes = {
+                [0] = 4,
+                [1] = 4,
+                [2] = 4,
+                [3] = 4,
+                [4] = 0
+            }
+            local view = GetFollowPedCamViewMode()
+            if viewTypes[view] ~= nil then
+                SetFollowVehicleCamViewMode(viewTypes[view])
+                SetGameplayCamRelativeHeading(0.0)
+            end
         end
 
         if Config.testDriveEnabled then
             -- G key (test-drive)
             if IsControlJustPressed(0, 113) then
-                SetCamActive(cam, false)
-                RenderScriptCams(false, true, 1000, true, true)
-                DestroyCam(cam, false)
-                cleanupVehicleCam()
+                cleanupVehicleView(returnCoords)
                 testDrive(model)
+                vehicleView = false
             end
         end
 
-        -- E key (exit cam)
-        if IsControlJustPressed(0, 54) then
-            SetCamActive(cam, false)
-            RenderScriptCams(false, true, 650, true, true)
-            DestroyCam(cam, false)
-            cleanupVehicleCam()
+        if IsControlJustPressed(0, 191) then -- ENTER key (purchase)
+            cleanupVehicleView(returnCoords)
+            purchaseVehicle(model, price)
+            vehicleView = false
+        end
+
+        if IsDisabledControlJustPressed(0, 75) then -- F key (exit)
+            cleanupVehicleView(returnCoords)
+            vehicleView = false
         end
     end
 end
@@ -291,7 +275,7 @@ lib.registerMenu({
     for i = 1, #Config.vehicles[args.category] do
         if i == scrollIndex then
             lib.hideMenu()
-            createVehicleCam(Config.vehicles[args.category][i].model, Config.vehicles[args.category][i].price)
+            createVehicleView(Config.vehicles[args.category][i].model, Config.vehicles[args.category][i].price)
         end
     end
 end)
@@ -312,6 +296,8 @@ end)
 AddEventHandler('onResourceStop', function(resourceName)
     if cache.resource ~= resourceName then return end
 
+    TriggerServerEvent('ND_Dealership:setTestDriveBucket', true)
+
     lib.hideMenu()
     lib.hideTextUI()
     if worker > 0 then
@@ -322,13 +308,6 @@ AddEventHandler('onResourceStop', function(resourceName)
     if displayVehicle > 0 then
         print('Deleting display vehicle: ' .. displayVehicle)
         DeleteVehicle(displayVehicle)
-    end
-
-    if cam > 0 then
-        print('Destroying camera: ' .. cam)
-        SetCamActive(cam, false)
-        RenderScriptCams(false, true, 500, true, true)
-        DestroyCam(cam, false)
     end
 
     if cellphone > 0 then
@@ -392,7 +371,7 @@ CreateThread(function()
                 end
             else
                 if lib.getOpenMenu() ~= nil then lib.hideMenu(true) end
-                if notified then
+                if notified and not vehicleView then
                     notified = false
                     lib.hideTextUI()
                 end
