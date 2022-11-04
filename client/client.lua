@@ -211,8 +211,7 @@ local function createVehicleView(model, price)
     SetVehRadioStation(displayVehicle, 'OFF')
     SetPedIntoVehicle(cache.ped, displayVehicle, -1)
     SetEntityCollision(displayVehicle, false, false)
-    SetGameplayCamRelativeRotation(180.0, 20.0, 120.0)
-    SetGameplayCamRelativeHeading(155.0)
+    SetGameplayCamRelativeRotation(155.0, 20.0, 0.0)
     vehicleView = true
 
     lib.showTextUI('[ENTER] Purchase ($' .. price .. ')  ' .. (Config.testDriveEnabled and '\n[G] Test-Drive' or ' ') .. '  \n[F] Exit')
