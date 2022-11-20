@@ -2,20 +2,48 @@ Config = {
     testDriveEnabled = true, -- enables test-driving before purchasing.
     testDriveTime = 45, -- amount of time IN SECONDS that test-drivers get alloted.
     testDriveRadius = 250.0, -- radius around the dealership that test-drivers can be in (will end the test-drive if they venture outside this value, 250 is a good start).
-    purchasedVehicleSpawns = {
-        vector4(-14.16, -1108.17, 26.20, 282.01),
-        vector4(-12.82, -1105.19, 26.20, 282.08),
-        vector4(-11.70, -1102.36, 26.20, 280.18),
-        vector4(-10.60, -1099.58, 26.20, 280.60),
-        vector4(-9.77, -1096.74, 26.20, 280.28),
-        vector4(-8.10, -1081.52, 26.21, 124.82),
-        vector4(-11.14, -1080.48, 26.20, 125.45),
-        vector4(-47.71, -1116.63, 25.96, 1.28),
-        vector4(-50.64, -1116.85, 25.96, 1.26),
-        vector4(-53.53, -1116.77, 25.96, 0.48),
-        vector4(-56.33, -1116.96, 25.96, 2.03)
+    dealerships = {
+        ["PDM"] = {
+            pedModel = `cs_siemonyetarian`,
+            pedCoords = vector4(-57.19, -1098.90, 26.42, 17.27),
+            displayLocation = vector4(-44.38, -1098.05, 26.42, 248.96),
+            testDriveLocation = vector4(-44.88, -1082.68, 26.69, 67.59),
+            categories = {"Compacts", "Sedans", "SUVs", "Coupes", "Muscle", "Classics", "Sports", "super", "Motorcycles", "Off-Road", "Vans"},
+            blip = {sprite = 523, color = 3},
+            spawns = {
+                vector4(-14.16, -1108.17, 26.20, 282.01),
+                vector4(-12.82, -1105.19, 26.20, 282.08),
+                vector4(-11.70, -1102.36, 26.20, 280.18),
+                vector4(-10.60, -1099.58, 26.20, 280.60),
+                vector4(-9.77, -1096.74, 26.20, 280.28),
+                vector4(-8.10, -1081.52, 26.21, 124.82),
+                vector4(-11.14, -1080.48, 26.20, 125.45),
+                vector4(-47.71, -1116.63, 25.96, 1.28),
+                vector4(-50.64, -1116.85, 25.96, 1.26),
+                vector4(-53.53, -1116.77, 25.96, 0.48),
+                vector4(-56.33, -1116.96, 25.96, 2.03)
+            }
+        },
+        ["Mission Row PD"] = {
+            jobs = {"SAHP", "LSPD", "BCSO"},
+            pedModel = `csb_trafficwarden`,
+            pedCoords = vector4(458.82, -1017.13, 28.18, 90.48),
+            displayLocation = vector4(405.16, -964.92, -99.64, 212.03),
+            testDriveLocation = vector4(-2135.30, 1106.10, -27.43, 273.24),
+            categories = {"MRPD"},
+            blip = {sprite = 523, color = 3},
+            spawns = {
+                vector4(462.81, -1019.49, 27.68, 90.90),
+                vector4(462.99, -1014.55, 27.66, 91.79)
+            }
+        }
     },
     vehicles = {
+        ["MRPD"] = {
+            { model = `police`, price = 6000, label = "Wannabe Crown vic" },
+            { model = `police2`, price = 25000, label = "Wannabe Charger" },
+            { model = `police3`, price = 15000, label = "Wannabe Taurus" }
+        },
         ["Compacts"] = {
             { model = `asbo`, price = 8000 },
             { model = `blista`, price = 16000 },
