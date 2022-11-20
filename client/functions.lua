@@ -50,7 +50,7 @@ function spawnClonePed()
     SetPedConfigFlag(dummyPed, 208, true)
 
     local bone = GetPedBoneIndex(dummyPed, 26610)
-    local tablet = CreateObject(`prop_cs_tablet`, 0.0, 0.0, 0.0, true, false, false)
+    local tablet = CreateObject(`prop_cs_tablet`, 0.0, 0.0, 0.0, true, true, false)
     AttachEntityToEntity(tablet, dummyPed, bone, 0.15, -0.03, 0.0075, 180.0, -20.0, 0.0, true, false, false, false, 2, true)
     TaskPlayAnim(dummyPed, 'amb@code_human_in_bus_passenger_idles@female@tablet@base', 'base', 8.0, 8.0, -1, 49, 0, false, false, false)
 
@@ -70,7 +70,7 @@ function getDealerVehicles(category)
         end
 
         if categoryVeh.label then
-            values[#values+1] = categoryVeh.label
+            values[#values + 1] = categoryVeh.label
         else
             local make = GetLabelText(GetMakeNameFromVehicleModel(categoryVeh.model))
             local model = GetLabelText(GetDisplayNameFromVehicleModel(categoryVeh.model))
@@ -120,7 +120,7 @@ function getDealerMenu(categories)
     end
 
     local vehicles = sort(vehiclesTable)
-    
+
     for _, vehiclesStuff in pairs(vehicles) do
         options[#options+1] = {
             icon = 'car',
@@ -138,7 +138,7 @@ function cleanupVehicleView(returnCoords)
     SetEntityVisible(cache.ped, true, true)
     DeleteVehicle(displayVehicle)
     DeletePed(dummyPed)
-    SetEntityAsMissionEntity(tablet, true, true)
+    SetEntityAsMissionEntity(tablet, true, false)
     DeleteObject(tablet)
 
     lib.hideTextUI()
@@ -228,7 +228,6 @@ function testDrive(model)
 
     lib.hideTextUI()
 
-    SetEntityAsMissionEntity(testDriveVehicle, true, true)
     DeleteVehicle(testDriveVehicle)
     SetEntityCoords(cache.ped, returnCoords.x, returnCoords.y, returnCoords.z - 0.3, false, false, false, false)
     SetEntityHeading(cache.ped, returnHeading)
@@ -260,10 +259,9 @@ function purchaseVehicle(model, price)
         if method == nil then return end
         if inGarage == nil then inGarage = false end
 
-        local tempVeh = CreateVehicle(model, 0.0, 0.0, 0.0, 0.0, false, false)
+        local tempVeh = CreateVehicle(model, 0.0, 0.0, 0.0, 0.0, false, true)
         local props = lib.getVehicleProperties(tempVeh)
         props.class = GetVehicleClass(tempVeh)
-        SetEntityAsMissionEntity(tempVeh, true, true)
         DeleteVehicle(tempVeh)
 
         local selectedCharacter = NDCore.Functions.GetSelectedCharacter()
@@ -299,7 +297,7 @@ end
 function createVehicleView(model, price)
     lib.requestModel(model)
 
-    displayVehicle = CreateVehicle(model, currentDealer.displayLocation.x, currentDealer.displayLocation.y, currentDealer.displayLocation.z-0.4, currentDealer.displayLocation.w, false, false)
+    displayVehicle = CreateVehicle(model, currentDealer.displayLocation.x, currentDealer.displayLocation.y, currentDealer.displayLocation.z-0.4, currentDealer.displayLocation.w, false, true)
     repeat Wait(0) until DoesEntityExist(displayVehicle)
     ClearArea(-44.38, -1098.05, 26.42, 10.0, true, false, true, false)
     SetVehicleNumberPlateText(displayVehicle, 'DEALER')

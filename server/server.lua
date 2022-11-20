@@ -29,7 +29,7 @@ RegisterNetEvent('ND_Dealership:purchaseVehicle', function(props, inGarage, meth
     end
 end)
 
-RegisterNetEvent('ND_Dealership:setTestDriveBucket', function(returnToDefaultBucket, netId)
+RegisterNetEvent('ND_Dealership:setTestDriveBucket', function(returnToDefaultBucket)
     local source = source
     local bucket = 0
 
@@ -41,6 +41,4 @@ RegisterNetEvent('ND_Dealership:setTestDriveBucket', function(returnToDefaultBuc
     end
 
     SetPlayerRoutingBucket(source, tonumber(bucket))
-
-    print(GetPlayerRoutingBucket(source))
 end)

@@ -22,7 +22,7 @@ RegisterNetEvent("ND:setCharacter", function(character)
     for dealership, dealerInfo in pairs(Config.dealerships) do
         if jobHasAccess(selectedCharacter.job, dealerInfo) then
             local blip = AddBlipForCoord(dealerInfo.pedCoords.x, dealerInfo.pedCoords.y, dealerInfo.pedCoords.z)
-            dealerBlips[#dealerBlips+1] = blip
+            dealerBlips[#dealerBlips + 1] = blip
             SetBlipSprite(blip, 523)
             SetBlipColour(blip, 3)
             SetBlipScale(blip, 0.8)
@@ -59,7 +59,7 @@ AddEventHandler('onResourceStart', function(resourceName)
     for dealership, dealerInfo in pairs(Config.dealerships) do
         if jobHasAccess(selectedCharacter.job, dealerInfo) then
             local blip = AddBlipForCoord(dealerInfo.pedCoords.x, dealerInfo.pedCoords.y, dealerInfo.pedCoords.z)
-            dealerBlips[#dealerBlips+1] = blip
+            dealerBlips[#dealerBlips + 1] = blip
             SetBlipSprite(blip, 523)
             SetBlipColour(blip, 3)
             SetBlipScale(blip, 0.8)
@@ -78,32 +78,22 @@ AddEventHandler('onResourceStop', function(resourceName)
 
     lib.hideMenu()
     lib.hideTextUI()
-    if worker > 0 then
-        print('Deleting dealership worker: ' .. worker)
-        DeletePed(worker)
-    end
 
-    if displayVehicle > 0 then
-        print('Deleting display vehicle: ' .. displayVehicle)
-        DeleteVehicle(displayVehicle)
-    end
+    print('Deleting dealership worker: ' .. worker)
+    DeletePed(worker)
 
-    if testDriveVehicle > 0 then
-        print('Deleting test-drive vehicle: ' .. testDriveVehicle)
-        SetEntityAsMissionEntity(testDriveVehicle, true, true)
-        DeleteVehicle(testDriveVehicle)
-    end
+    print('Deleting display vehicle: ' .. displayVehicle)
+    DeleteVehicle(displayVehicle)
 
-    if dummyPed > 0 then
-        print('Deleting dummy ped: ' .. dummyPed)
-        DeletePed(dummyPed)
-    end
+    print('Deleting test-drive vehicle: ' .. testDriveVehicle)
+    DeleteVehicle(testDriveVehicle)
 
-    if tablet > 0 then
-        print('Deleting tablet: ' .. tablet)
-        SetEntityAsMissionEntity(tablet, true, true)
-        DeleteObject(tablet)
-    end
+    print('Deleting dummy ped: ' .. dummyPed)
+    DeletePed(dummyPed)
+
+    print('Deleting tablet: ' .. tablet)
+    SetEntityAsMissionEntity(tablet, true, false)
+    DeleteObject(tablet)
 end)
 
 CreateThread(function()

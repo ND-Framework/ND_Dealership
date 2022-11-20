@@ -40,7 +40,7 @@ Config = {
     },
     vehicles = {
         ["MRPD"] = {
-            { model = `police`, price = 6000, label = "Wannabe Crown vic" },
+            { model = `police`, price = 6000, label = "Wannabe Crown Vic" },
             { model = `police2`, price = 25000, label = "Wannabe Charger" },
             { model = `police3`, price = 15000, label = "Wannabe Taurus" }
         },
