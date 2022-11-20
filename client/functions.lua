@@ -122,7 +122,7 @@ function getDealerMenu(categories)
     local vehicles = sort(vehiclesTable)
 
     for _, vehiclesStuff in pairs(vehicles) do
-        options[#options+1] = {
+        options[#options + 1] = {
             icon = 'car',
             label = vehiclesStuff.category,
             values = getDealerVehicles(vehiclesStuff.vehicles),
@@ -136,6 +136,7 @@ function cleanupVehicleView(returnCoords)
     SetEntityHeading(cache.ped, 255.23)
     SetEntityCoords(cache.ped, returnCoords.x, returnCoords.y, returnCoords.z - 1.0, false, false, false, false)
     SetEntityVisible(cache.ped, true, true)
+    UnpinInterior(25090)
     DeleteVehicle(displayVehicle)
     DeletePed(dummyPed)
     SetEntityAsMissionEntity(tablet, true, false)
@@ -153,6 +154,9 @@ function testDrive(model)
     local labelName = GetLabelText(GetDisplayNameFromVehicleModel(model))
     local returnCoords, returnHeading = GetEntityCoords(cache.ped), GetEntityHeading(cache.ped)
     if makeName == 'NULL' then makeName = '' end
+
+    PinInteriorInMemory(285697)
+    repeat Wait(0) until IsInteriorReady(285697)
 
     TriggerServerEvent('ND_Dealership:setTestDriveBucket', false)
 
@@ -231,6 +235,7 @@ function testDrive(model)
     DeleteVehicle(testDriveVehicle)
     SetEntityCoords(cache.ped, returnCoords.x, returnCoords.y, returnCoords.z - 0.3, false, false, false, false)
     SetEntityHeading(cache.ped, returnHeading)
+    UnpinInterior(285697)
 
     onTestDrive = false
     testDriveVehicle = 0
@@ -296,6 +301,8 @@ end
 
 function createVehicleView(model, price)
     lib.requestModel(model)
+    PinInteriorInMemory(25090)
+    repeat Wait(0) until IsInteriorReady(25090)
 
     displayVehicle = CreateVehicle(model, currentDealer.displayLocation.x, currentDealer.displayLocation.y, currentDealer.displayLocation.z-0.4, currentDealer.displayLocation.w, false, true)
     repeat Wait(0) until DoesEntityExist(displayVehicle)

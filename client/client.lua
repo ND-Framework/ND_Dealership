@@ -79,19 +79,17 @@ AddEventHandler('onResourceStop', function(resourceName)
     lib.hideMenu()
     lib.hideTextUI()
 
-    print('Deleting dealership worker: ' .. worker)
+    UnpinInterior(25090)
+    UnpinInterior(285697)
+
     DeletePed(worker)
 
-    print('Deleting display vehicle: ' .. displayVehicle)
     DeleteVehicle(displayVehicle)
 
-    print('Deleting test-drive vehicle: ' .. testDriveVehicle)
     DeleteVehicle(testDriveVehicle)
 
-    print('Deleting dummy ped: ' .. dummyPed)
     DeletePed(dummyPed)
 
-    print('Deleting tablet: ' .. tablet)
     SetEntityAsMissionEntity(tablet, true, false)
     DeleteObject(tablet)
 end)
