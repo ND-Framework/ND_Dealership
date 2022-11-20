@@ -69,6 +69,14 @@ AddEventHandler('onResourceStart', function(resourceName)
             EndTextCommandSetBlipName(blip)
         end
     end
+
+    for _, vehicles in pairs(Config.vehicles) do
+        for _, vehicle in pairs(vehicles) do
+            if vehicle.label then
+                AddTextEntryByHash(vehicle.model, vehicle.label)
+            end
+        end
+    end
 end)
 
 AddEventHandler('onResourceStop', function(resourceName)
