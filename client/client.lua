@@ -118,7 +118,7 @@ CreateThread(function()
         local nearDealer = false
         for dealership, dealerInfo in pairs(Config.dealerships) do
             local dist = #(pedCoords - vec3(dealerInfo.pedCoords.x, dealerInfo.pedCoords.y, dealerInfo.pedCoords.z))
-            if dist <= 60.0 and jobHasAccess(selectedCharacter.job, dealerInfo) then
+            if selectedCharacter and dist <= 60.0 and jobHasAccess(selectedCharacter.job, dealerInfo) then
                 nearDealer = true
                 if worker == 0 then
                     worker = spawnWorker(dealerInfo)
