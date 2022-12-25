@@ -10,6 +10,7 @@ currentDealer = nil
 NDCore = exports.ND_Core:GetCoreObject()
 selectedCharacter = NDCore.Functions.GetSelectedCharacter()
 dealerBlips = {}
+currentDealerName = ""
 
 RegisterNetEvent("ND:setCharacter", function(character)
     if selectedCharacter and character.id == selectedCharacter.id then return end
@@ -136,6 +137,7 @@ CreateThread(function()
                     end
 
                     if not dealerShown and IsControlJustPressed(0, 54) then
+                        currentDealerName = dealership
                         currentDealer = dealerInfo
                         dealerShown = true
                         lib.hideTextUI()

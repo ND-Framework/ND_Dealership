@@ -274,7 +274,7 @@ function purchaseVehicle(model, price)
         local oldBalance = method == 'cash' and selectedCharacter.cash or selectedCharacter.bank
 
         if oldBalance >= price then
-            TriggerServerEvent('ND_Dealership:purchaseVehicle', props, inGarage, method)
+            TriggerServerEvent('ND_Dealership:purchaseVehicle', props, inGarage, method, currentDealerName)
 
             local newBalance = oldBalance - price
 

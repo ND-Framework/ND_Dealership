@@ -15,7 +15,7 @@ local function getPriceFromModel(model)
     return false
 end
 
-RegisterNetEvent('ND_Dealership:purchaseVehicle', function(props, inGarage, method)
+RegisterNetEvent('ND_Dealership:purchaseVehicle', function(props, inGarage, method, dealerName)
     local source = source
     local player = NDCore.Functions.GetPlayer(source)
     local price = getPriceFromModel(props.model)
@@ -25,7 +25,10 @@ RegisterNetEvent('ND_Dealership:purchaseVehicle', function(props, inGarage, meth
 
     local vehid = exports.ND_VehicleSystem:setVehicleOwned(source, props, true)
     if not inGarage then
-        exports.ND_VehicleSystem:spawnOwnedVehicle(source, vehid, Config.purchasedVehicleSpawns)
+        if not dealerName or not Config.dealerships[dealerName] then return end
+        local spawns = Config.dealerships[dealerName].spawns
+        if not spawns then return end
+        exports.ND_VehicleSystem:spawnOwnedVehicle(source, vehid, spawns)
     end
 end)
 
