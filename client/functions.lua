@@ -263,7 +263,10 @@ function purchaseVehicle(model, price)
 
         if method == nil then return end
         if inGarage == nil then inGarage = false end
-
+        
+        if not IsModelInCdimage(model) then return end
+        RequestModel(model)
+        repeat Wait(10) until HasModelLoaded(model)
         local tempVeh = CreateVehicle(model, 0.0, 0.0, 0.0, 0.0, false, true)
         local props = lib.getVehicleProperties(tempVeh)
         props.class = GetVehicleClass(tempVeh)
