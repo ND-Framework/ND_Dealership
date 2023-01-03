@@ -65,7 +65,7 @@ function getDealerVehicles(category)
 
     for _, categoryVeh in pairs(category) do
         if not IsModelInCdimage(categoryVeh.model) or not IsModelAVehicle(categoryVeh.model) then
-            print('^3Hash: ' .. categoryVeh.model .. ' isn\'t in the game\'s CD image or isn\'t a vehicle at all. If this is a valid vehicle model hash you may need to update your server\'s game build. Skipping^0.')
+            print(('^3Hash: %s isn\'t in the game\'s CD image or isn\'t a vehicle at all. If this is a valid vehicle model hash you may need to update your server\'s game build. Skipping^0.'):format(categoryVeh.model))
             goto skip
         end
 
