@@ -10,7 +10,10 @@ lua54 "yes"
 
 files {
     "data/dealerships.lua",
-    "data/vehicles.lua"
+    "data/vehicles.lua",
+    "client/showroom.lua",
+    "client/testdrive.lua",
+    "client/menu.lua"
 }
 shared_script {
     "@ox_lib/init.lua",
