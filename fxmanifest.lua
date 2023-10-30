@@ -1,24 +1,22 @@
-fx_version 'cerulean'
-game 'gta5'
+-- For support join my discord: https://discord.gg/Z9Mxu72zZ6
 
-lua54 'yes'
-use_experimental_fxv2_oal 'yes'
+author "Andyyy"
+description "Basic dealership for ND-Framework"
+version "2.0.0"
 
-author 'geneva#3054 & Andyyy#7666'
-description 'A dealership for ND-Framework.'
+fx_version "cerulean"
+game "gta5"
+lua54 "yes"
 
-client_scripts {
-    '@ox_lib/init.lua',
-    'client/functions.lua',
-    'client/client.lua'
+files {
+    "data/dealerships.lua",
+    "data/vehicles.lua"
 }
-
-shared_script 'config.lua'
-
-server_script 'server/server.lua'
-
-dependencies {
-    'ND_Core',
-    'ND_VehicleSystem',
-    'ox_lib'
+shared_script {
+    "@ox_lib/init.lua",
+    "@ND_Core/init.lua"
 }
+server_script "server/main.lua"
+client_script "client/main.lua"
+
+dependency "ND_Core"
