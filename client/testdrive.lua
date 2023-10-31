@@ -47,7 +47,9 @@ function testdrive.start(data)
     DoScreenFadeOut(1500)
     Wait(1500)
 
-    local pedNetId, tabletNetId = lib.callback.await("ND_Dealership:setupTestDrive", nil, GetEntityModel(cache.ped))
+    local _, dealer = Showroom.getVehicleData(data.entity)
+    local pedNetId, tabletNetId = lib.callback.await("ND_Dealership:setupTestDrive", nil, GetEntityModel(cache.ped), dealer)
+    if not pedNetId or not tabletNetId then return end
     local fakePed, tablet = getEntityFromNetId(pedNetId), getEntityFromNetId(tabletNetId)
 
     if fakePed then
@@ -59,7 +61,7 @@ function testdrive.start(data)
         Wait(1500)
     end
 
-    TriggerServerEvent("ND_Dealership:startTestDrive", lib.getVehicleProperties(data.entity))
+    TriggerServerEvent("ND_Dealership:startTestDrive", lib.getVehicleProperties(data.entity), dealer)
 end
 
 function testdrive.enterZone(self)

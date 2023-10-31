@@ -22,7 +22,8 @@ local function getShowrooms()
         for i=1, #showroomLocations do
             local vehicle = getRandomShowroomVehicle(info.showroomCategories or info.categories)
             vehicle.location = showroomLocations[i]
-            sr[#sr+1] = vehicle
+            vehicle.groups = info.groups
+            sr[i] = vehicle
         end
         updatedShowrooms[dealer] = sr
 
@@ -84,7 +85,27 @@ RegisterNetEvent("ND_Dealership:updateDealerProperties", function(dealer, proper
     end
 end)
 
-lib.callback.register("ND_Dealership:setupTestDrive", function(src, pedModel)
+local function hasPermissionGroup(src, permission, dealership)
+    local dealer = data.dealerships[dealership]
+    if not dealer.groups then
+        return true
+    end
+
+    local player = NDCore.getPlayer(src)
+    if not player then return end
+    
+    local hasPerms = false
+    for group, info in pairs(dealer.groups) do
+        if info[permission] and player.getGroup(group) then
+            hasPerms = true
+        end
+    end
+    return hasPerms
+end
+
+lib.callback.register("ND_Dealership:setupTestDrive", function(src, pedModel, dealership)
+    if not hasPermissionGroup(src, "testdrive", dealership) then return end
+
     local ped = GetPlayerPed(src)
     local coords = GetEntityCoords(ped)
     local lastCoords = vec4(coords.x, coords.y, coords.z, GetEntityHeading(ped))
@@ -102,8 +123,10 @@ lib.callback.register("ND_Dealership:setupTestDrive", function(src, pedModel)
     return pedNetId, tabletNetId
 end)
 
-RegisterNetEvent("ND_Dealership:startTestDrive", function(properties)
+RegisterNetEvent("ND_Dealership:startTestDrive", function(properties, dealership)
     local src = source
+    if not hasPermissionGroup(src, "testdrive", dealership) then return end
+
     local ped = GetPlayerPed(src)
     SetEntityCoords(ped, testDriveLocation.x, testDriveLocation.y, testDriveLocation.z)
     Wait(100)
@@ -134,6 +157,9 @@ RegisterNetEvent("ND_Dealership:exitTestDrive", function()
 end)
 
 RegisterNetEvent("ND_Dealership:switchShowroomVehicle", function(selectedVehicle, dealership, category, index, properties)
+    local src = source
+    if not hasPermissionGroup(src, "switch", dealership) then return end
+
     local showRoom = showrooms[dealership]
     local dealer = data.dealerships[dealership]
     local categoryVehicles = data.vehicles[category]
@@ -167,6 +193,8 @@ end
 
 RegisterNetEvent("ND_Dealership:purchaseVehicle", function(stored, dealer, info)
     local src = source
+    if not hasPermissionGroup(src, "purchase", dealer) then return end
+
     local model = info?.model
     local properties = info?.properties
     local dealership = data.dealerships?[dealer]

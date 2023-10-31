@@ -1,12 +1,19 @@
 return {
     ["PDM"] = {
-        pedModel = `cs_siemonyetarian`,
-        pedCoords = vec4(-55.66, -1098.02, 26.42, 16.66),
         showroomCategories = {"Coupes", "Muscle", "Classics", "Sports", "super"},
         categories = {"Compacts", "Sedans", "SUVs", "Coupes", "Muscle", "Classics", "Sports", "super", "Motorcycles", "Off-Road", "Vans"},
         blip = {
             sprite = 523,
-            color = 3
+            color = 3,
+            coords = vec3(-45.11, -1099.67, 25.84)
+        },
+        groups = {
+            ["lspd"] = {
+                switch = true,
+                testdrive = true,
+                purchase = true,
+                interact = true
+            }
         },
         showroomLocations = {
             vec4(-47.12, -1102.36, 25.78, 268.31),

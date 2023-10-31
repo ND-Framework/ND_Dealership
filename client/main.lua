@@ -1,4 +1,4 @@
-local showroom = require "client.showroom"
+Showroom = require "client.showroom"
 local testdrive = require "client.testdrive"
 local menu = require "client.menu"
 local selectedVehicle = nil
@@ -15,7 +15,7 @@ lib.zones.box({
 })
 
 RegisterNetEvent("ND_Dealership:updateShowroomVehicle", function(selectedVehicle, dealer, index, vehicleInfo)
-    showroom.createVehicle(selectedVehicle, dealer, index, vehicleInfo)
+    Showroom.createVehicle(selectedVehicle, dealer, index, vehicleInfo)
 end)
 
 AddEventHandler("ND_Dealership:menuItemSelected", function(selected)
@@ -33,24 +33,28 @@ AddEventHandler("ND_Dealership:menuItemSelected", function(selected)
 end)
 
 AddEventHandler("ND_Dealership:createVehicleTargets", function(vehicles, dealer, vehicleSlots)
-    Target:addLocalEntity(vehicles, {
+    Target:addLocalEntity(vehicles.testdrive, {
         {
             name = "nd_dealership:showroomTestDrive",
             icon = "fa-solid fa-key",
             label = "Test drive",
             distance = 1.5,
             onSelect = testdrive.start
-        },
+        }
+    })
+    Target:addLocalEntity(vehicles.switch, {
         {
             name = "nd_dealership:showroomSwitchVeh",
             icon = "fa-solid fa-warehouse",
             label = "Switch vehicle",
             distance = 1.5,
             onSelect = function(data)
-                selectedVehicle = showroom.getSlotFromEntity(data.entity, vehicleSlots)
+                selectedVehicle = Showroom.getSlotFromEntity(data.entity, vehicleSlots)
                 menu.show(dealer, "switch")
             end
-        },
+        }
+    })
+    Target:addLocalEntity(vehicles.purchase, {
         {
             name = "nd_dealership:showroomPurchase",
             icon = "fa-solid fa-money-check-dollar",
@@ -58,7 +62,7 @@ AddEventHandler("ND_Dealership:createVehicleTargets", function(vehicles, dealer,
             distance = 1.5,
             onSelect = function(data)
                 local veh = data.entity
-                local info, dealer = showroom.getVehicleData(veh)
+                local info, dealer = Showroom.getVehicleData(veh)
                 local input = lib.inputDialog(("Purchase vehicle for $%s"):format(info.price), {
                     {type = "checkbox", label = "Send to garage"}
                 })
@@ -71,12 +75,12 @@ end)
 
 AddEventHandler("onResourceStop", function(resource)
     if resource ~= cache.resource then return end
-    for _, vehicles in pairs(showroom.vehicles) do
-        showroom.deleteVehicles(vehicles)
+    for _, vehicles in pairs(Showroom.vehicles) do
+        Showroom.deleteVehicles(vehicles)
     end
 end)
 
 RegisterNetEvent("ND_Dealership:updateShowroomData", function(showrooms)
-    showroom.createShowrooms(showrooms)
+    Showroom.createShowrooms(showrooms)
 end)
 

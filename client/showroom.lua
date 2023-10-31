@@ -34,10 +34,29 @@ function showroom.getVehicleData(entity)
     end
 end
 
+local function hasPermissionGroup(permission, groups)
+    local player = NDCore.getPlayer(src)
+    if not player or not groups then return end
+    
+    local hasPerms = false
+    for group, info in pairs(groups) do
+        if info[permission] and player.groups[group] then
+            hasPerms = true
+        end
+    end
+    return hasPerms
+end
+
 function showroom.spawnVehicles(dealer, sr)
     local vehiclesCreated = {}
     local dealerProperties = {}
     local vehicleSlots = {}
+    local vehicleTargets = {
+        switch = {},
+        testdrive = {},
+        purchase = {}
+    }
+
     for i=1, #sr do
         local info = sr[i]
         local loc = info.location
@@ -47,6 +66,22 @@ function showroom.spawnVehicles(dealer, sr)
         local vehicle = CreateVehicle(info.model, loc.x, loc.y, loc.z, loc.w, false, false)
         vehiclesCreated[#vehiclesCreated+1] = vehicle
         vehicleSlots[i] = vehicle
+
+        if info.groups then        
+            if hasPermissionGroup("switch", info.groups) then
+                vehicleTargets.switch[#vehicleTargets.switch+1] = vehicle
+            end
+            if hasPermissionGroup("testdrive", info.groups) then
+                vehicleTargets.testdrive[#vehicleTargets.testdrive+1] = vehicle
+            end
+            if hasPermissionGroup("purchase", info.groups) then
+                vehicleTargets.purchase[#vehicleTargets.purchase+1] = vehicle
+            end
+        else
+            vehicleTargets.switch[#vehicleTargets.switch+1] = vehicle
+            vehicleTargets.testdrive[#vehicleTargets.testdrive+1] = vehicle
+            vehicleTargets.purchase[#vehicleTargets.purchase+1] = vehicle
+        end
 
         SetVehicleDoorsLocked(vehicle, 2)
         SetVehicleOnGroundProperly(vehicle)
@@ -62,7 +97,7 @@ function showroom.spawnVehicles(dealer, sr)
         end
     end
     showroom.vehicles[dealer] = vehiclesCreated
-    TriggerEvent("ND_Dealership:createVehicleTargets", vehiclesCreated, dealer, vehicleSlots)
+    TriggerEvent("ND_Dealership:createVehicleTargets", vehicleTargets, dealer, vehicleSlots)
     return dealerProperties
 end
 
@@ -81,12 +116,18 @@ end
 function showroom.createVehicle(selectedVehicle, dealer, index, vehicleInfo)
     local vehicleSlots = {}
     local sr = showroom.rooms[dealer]
+    local vehicleTargets = {
+        switch = {},
+        testdrive = {},
+        purchase = {}
+    }
 
     local oldVehicle = sr[selectedVehicle]?.vehicle
     if oldVehicle and DoesEntityExist(oldVehicle) then
         DeleteEntity(oldVehicle)
     end
 
+    vehicleInfo.groups = sr[selectedVehicle]?.groups
     sr[selectedVehicle] = vehicleInfo
     local info = sr[selectedVehicle]
 
@@ -94,6 +135,22 @@ function showroom.createVehicle(selectedVehicle, dealer, index, vehicleInfo)
     ClearAreaOfVehicles(loc.x, loc.y, loc.z, 10.0, false, false, false, false, false)
     lib.requestModel(info.model)
     local vehicle = CreateVehicle(info.model, loc.x, loc.y, loc.z, loc.w, false, false)
+
+    if info.groups then        
+        if hasPermissionGroup("switch", info.groups) then
+            vehicleTargets.switch[#vehicleTargets.switch+1] = vehicle
+        end
+        if hasPermissionGroup("testdrive", info.groups) then
+            vehicleTargets.testdrive[#vehicleTargets.testdrive+1] = vehicle
+        end
+        if hasPermissionGroup("purchase", info.groups) then
+            vehicleTargets.purchase[#vehicleTargets.purchase+1] = vehicle
+        end
+    else
+        vehicleTargets.switch[#vehicleTargets.switch+1] = vehicle
+        vehicleTargets.testdrive[#vehicleTargets.testdrive+1] = vehicle
+        vehicleTargets.purchase[#vehicleTargets.purchase+1] = vehicle
+    end
     
     replaceCreatedVehicle(dealer, oldVehicle, vehicle)
     SetVehicleDoorsLocked(vehicle, 2)
@@ -110,7 +167,7 @@ function showroom.createVehicle(selectedVehicle, dealer, index, vehicleInfo)
         clientVehicles[i] = veh.vehicle
     end
 
-    TriggerEvent("ND_Dealership:createVehicleTargets", {vehicle}, dealer, clientVehicles)
+    TriggerEvent("ND_Dealership:createVehicleTargets", vehicleTargets, dealer, clientVehicles)
 end
 
 function showroom.createPoints()
