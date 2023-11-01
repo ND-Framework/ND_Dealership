@@ -15,6 +15,11 @@ return {
                 interact = true
             }
         },
+        interact = {
+            pedModel = `cs_siemonyetarian`,
+            pedCoords = vec4(-57.19, -1098.90, 26.42, 17.27),
+            vehicleCoords = vec4(405.13, -957.99, -99.54, 156.02)
+        },
         showroomLocations = {
             vec4(-47.12, -1102.36, 25.78, 268.31),
             vec4(-42.63, -1095.90, 26.11, 120.56),
