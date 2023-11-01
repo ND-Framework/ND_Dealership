@@ -13,7 +13,8 @@ files {
     "data/vehicles.lua",
     "client/showroom.lua",
     "client/testdrive.lua",
-    "client/menu.lua"
+    "client/menu.lua",
+    "client/ped.lua"
 }
 shared_script {
     "@ox_lib/init.lua",
