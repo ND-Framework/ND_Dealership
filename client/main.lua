@@ -4,6 +4,14 @@ local menu = require "client.menu"
 local selectedVehicle = nil
 Target = exports.ox_target
 
+function PurchaseVehicle(dealer, info)
+    local input = lib.inputDialog(("Purchase vehicle for $%s"):format(info.price), {
+        {type = "checkbox", label = "Send to garage"}
+    })
+    if not input or not info then return end
+    TriggerServerEvent("ND_Dealership:purchaseVehicle", input[1], dealer, info)
+end
+
 function HasPermissionGroup(permission, groups)
     local player = NDCore.getPlayer()
     if not player then return end
@@ -77,11 +85,7 @@ AddEventHandler("ND_Dealership:createVehicleTargets", function(vehicles, dealer,
             onSelect = function(data)
                 local veh = data.entity
                 local info, dealer = Showroom.getVehicleData(veh)
-                local input = lib.inputDialog(("Purchase vehicle for $%s"):format(info.price), {
-                    {type = "checkbox", label = "Send to garage"}
-                })
-                if not input or not info then return end
-                TriggerServerEvent("ND_Dealership:purchaseVehicle", input[1], dealer, info)
+                PurchaseVehicle(dealer, info)
             end
         }
     })
