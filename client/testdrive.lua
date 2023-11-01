@@ -79,7 +79,7 @@ function testdrive.enterZone(self)
         DoScreenFadeIn(1500)
     end)
     Wait(1500)
-    lib.showTextUI("[E] - Leave test drive", {
+    lib.showTextUI("[F] - Leave test drive", {
         icon = "person-walking-arrow-right"
     })
 end
@@ -95,7 +95,7 @@ function testdrive.exitZone(self)
 end
 
 function testdrive.insideZone(self)
-    if testdrive.active and IsControlJustPressed(0, 38) then
+    if testdrive.active and IsControlJustPressed(0, 75) then
         endTestDrive()
     end
 end
