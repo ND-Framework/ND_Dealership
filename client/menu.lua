@@ -50,6 +50,7 @@ local function getDealerVehicles(categoryVehicles)
         end
 
         if vehicleInfo.label then
+            AddTextEntryByHash(model, vehicleInfo.label)
             values[#values+1] = vehicleInfo.label
         else
             values[#values+1] = getVehicleLabel(model)
