@@ -1,7 +1,4 @@
 return {
-    ["test"] = {
-        { model = `stretch`, price = 29000 },
-    },
     ["MRPD"] = {
         { model = `police`, price = 6000, label = "Crown Vic" },
         { model = `police2`, price = 25000, label = "Charger" },
