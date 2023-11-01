@@ -70,6 +70,10 @@ function testdrive.enterZone(self)
         if cache.vehicle then
             SetVehicleOnGroundProperly(cache.vehicle)
             SetVehicleDoorsLocked(cache.vehicle, 4)
+            SetGameplayCamRelativeHeading(0)
+
+            local int = GetInteriorAtCoords(self.coords)
+            RefreshInterior(int)
         end
         Wait(1000)
         DoScreenFadeIn(1500)
