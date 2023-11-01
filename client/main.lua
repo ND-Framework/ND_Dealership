@@ -1,6 +1,10 @@
+Data = {
+    dealerships = require "data.dealerships",
+    vehicles = require "data.vehicles"
+}
 Showroom = require "client.showroom"
-local testdrive = require "client.testdrive"
-local menu = require "client.menu"
+Menu = require "client.menu"
+Testdrive = require "client.testdrive"
 local selectedVehicle = nil
 Target = exports.ox_target
 
@@ -31,9 +35,9 @@ lib.zones.box({
     coords = vec3(-1984.0, 1111.0, -23.0),
     size = vec3(302.0, 252.5, 11.0),
     rotation = 0.0,
-    onEnter = testdrive.enterZone,
-    onExit = testdrive.exitZone,
-    inside = testdrive.insideZone
+    onEnter = Testdrive.enterZone,
+    onExit = Testdrive.exitZone,
+    inside = Testdrive.insideZone
 })
 
 RegisterNetEvent("ND_Dealership:updateShowroomVehicle", function(selectedVehicle, dealer, index, vehicleInfo)
@@ -61,7 +65,7 @@ AddEventHandler("ND_Dealership:createVehicleTargets", function(vehicles, dealer,
             icon = "fa-solid fa-key",
             label = "Test drive",
             distance = 1.5,
-            onSelect = testdrive.start
+            onSelect = Testdrive.start
         }
     })
     Target:addLocalEntity(vehicles.switch, {
@@ -72,7 +76,7 @@ AddEventHandler("ND_Dealership:createVehicleTargets", function(vehicles, dealer,
             distance = 1.5,
             onSelect = function(data)
                 selectedVehicle = Showroom.getSlotFromEntity(data.entity, vehicleSlots)
-                menu.show(dealer, "switch")
+                Menu.show(dealer, "switch")
             end
         }
     })

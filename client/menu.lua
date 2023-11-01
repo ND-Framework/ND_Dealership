@@ -1,7 +1,4 @@
-local data = {
-    dealerships = require "data.dealerships",
-    vehicles = require "data.vehicles"
-}
+local menu = {}
 
 local function pairsByKeys(t, f)
     local a = {}
@@ -66,7 +63,7 @@ local function getDealerMenu(categories)
     local options = {}
     local categoryVehicles = {}
     for _, category in pairs(categories) do
-        categoryVehicles[category] = data.vehicles[category]
+        categoryVehicles[category] = Data.vehicles[category]
     end
 
     local vehicles = sort(categoryVehicles)
@@ -81,7 +78,7 @@ local function getDealerMenu(categories)
     return options
 end
 
-for dealership, dealerInfo in pairs(data.dealerships) do
+for dealership, dealerInfo in pairs(Data.dealerships) do
     local info = {
         id = ("ND_Dealership:%s"):format(dealership),
         title = dealership,
@@ -90,7 +87,7 @@ for dealership, dealerInfo in pairs(data.dealerships) do
     }
     lib.registerMenu(info, function(_, scrollIndex, args)
         local category = args.category
-        local categoryVehicles = data.vehicles[category]
+        local categoryVehicles = Data.vehicles[category]
         for i=1, #categoryVehicles do
             if i == scrollIndex then
                 lib.hideMenu()
@@ -102,17 +99,17 @@ for dealership, dealerInfo in pairs(data.dealerships) do
                     price = info.price,
                     model = info.model,
                     info = info,
-                    menuType = data.menuShowType
+                    menuType = menu.menuShowType
                 })
             end
         end
     end)
 end
 
-function data.show(dealer, showType)
-    data.menuShowType = showType
+function menu.show(dealer, showType)
+    menu.menuShowType = showType
     local dealerMenu = ("ND_Dealership:%s"):format(dealer)
     lib.showMenu(dealerMenu)
 end
 
-return data
+return menu
