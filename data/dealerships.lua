@@ -3,16 +3,19 @@ return {
         showroomCategories = {"Coupes", "Muscle", "Classics", "Sports", "super"},
         categories = {"Compacts", "Sedans", "SUVs", "Coupes", "Muscle", "Classics", "Sports", "super", "Motorcycles", "Off-Road", "Vans"},
         blip = {
+            coords = vec3(-56.59, -1098.67, 26.42),
             sprite = 523,
             color = 3,
-            coords = vec3(-45.11, -1099.67, 25.84)
+            scale = 0.8,
+            label = "Premium Deluxe Motorsports",
         },
         groups = {
             ["lspd"] = {
                 switch = true,
                 testdrive = true,
                 purchase = true,
-                interact = true
+                interact = true,
+                blip = true
             }
         },
         interact = {

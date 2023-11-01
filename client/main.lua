@@ -5,9 +5,10 @@ Data = {
 Showroom = require "client.showroom"
 Menu = require "client.menu"
 Testdrive = require "client.testdrive"
+Target = exports.ox_target
 local pedInteract = require "client.ped"
 local selectedVehicle = nil
-Target = exports.ox_target
+local createdBlips = {}
 
 function PurchaseVehicle(dealer, info)
     local input = lib.inputDialog(("Purchase vehicle for $%s"):format(info.price), {
@@ -29,6 +30,40 @@ function HasPermissionGroup(permission, groups)
         end
     end
     return hasPerms
+end
+
+local function clearBlips()
+    for i=1, #createdBlips do
+        local blip = createdBlips[i]
+        if blip and DoesBlipExist(blip) then
+            RemoveBlip(blip)
+        end
+    end
+    createdBlips = {}
+end
+
+local function createBlip(info)
+    local blip = AddBlipForCoord(info.coords.x, info.coords.y, info.coords.z)
+    SetBlipSprite(blip, info.sprite)
+    SetBlipColour(blip, info.color or 0)
+    SetBlipScale(blip, info.scale or 1.0)
+    SetBlipAsShortRange(blip, true)
+    if info.label then
+        BeginTextCommandSetBlipName("STRING")
+        AddTextComponentString(info.label)
+        EndTextCommandSetBlipName(blip)
+    end
+    createdBlips[#createdBlips+1] = blip
+end
+
+local function updateBlips()
+    clearBlips()
+    Wait(100)
+    for dealer, info in pairs(Data.dealerships) do
+        if info.blip and HasPermissionGroup("blip", info.groups) then
+            createBlip(info.blip)
+        end
+    end
 end
 
 lib.zones.box({
@@ -108,4 +143,9 @@ end)
 RegisterNetEvent("ND_Dealership:updateShowroomData", function(showrooms)
     Showroom.createShowrooms(showrooms)
     pedInteract.create()
+    updateBlips()
+end)
+
+RegisterNetEvent("ND:updateCharacter", function(character)
+    updateBlips()
 end)
