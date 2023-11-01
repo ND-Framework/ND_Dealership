@@ -103,12 +103,21 @@ local function hasPermissionGroup(src, permission, dealership)
     return hasPerms
 end
 
-lib.callback.register("ND_Dealership:setupTestDrive", function(src, pedModel, dealership)
+lib.callback.register("ND_Dealership:setupTestDrive", function(src, pedModel, dealership, lastCoords)
     if not hasPermissionGroup(src, "testdrive", dealership) then return end
 
-    local ped = GetPlayerPed(src)
-    local coords = GetEntityCoords(ped)
-    local lastCoords = vec4(coords.x, coords.y, coords.z, GetEntityHeading(ped))
+    if not lastCoords then        
+        local ped = GetPlayerPed(src)
+        local coords = GetEntityCoords(ped)
+        lastCoords = vec4(coords.x, coords.y, coords.z, GetEntityHeading(ped))
+    end
+
+    if not pedModel then
+        testDrivesStarted[src] = {
+            lastCoords = lastCoords
+        }
+        return true
+    end
 
     local fakePed = CreatePed(0, pedModel, lastCoords.x, lastCoords.y, lastCoords.z, lastCoords.w, true, true)
     local tablet = CreateObject(`prop_cs_tablet`, lastCoords.x, lastCoords.y, lastCoords.z, true, true, false)
@@ -246,7 +255,7 @@ RegisterNetEvent("ND_Dealership:purchaseVehicle", function(stored, dealer, info)
             position = "bottom"
         })
     end
-    local info = NDCore.spawnOwnedVehicle(src, vehicleId, coords)
-    if not info then return end
-    TriggerClientEvent("ND_Vehicles:blip", src, info.netId, true)
+    local newInfo = NDCore.spawnOwnedVehicle(src, vehicleId, coords)
+    if not newInfo then return end
+    TriggerClientEvent("ND_Vehicles:blip", src, newInfo.netId, true)
 end)
