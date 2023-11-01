@@ -1,7 +1,8 @@
 local showroom = {
     rooms = {},
     vehicles = {},
-    pointsCreated = false
+    pointsCreated = false,
+    slots = {}
 }
 
 function showroom.deleteVehicles(vehicles)
@@ -15,9 +16,9 @@ function showroom.deleteVehicles(vehicles)
     end
 end
 
-function showroom.getSlotFromEntity(entity, slots)
-    for slot, slotEntity in ipairs(slots) do
-        if slotEntity == entity then
+function showroom.getSlotFromEntity(entity)
+    for slot, slotEntity in ipairs(showroom.slots) do
+        if DoesEntityExist(slotEntity) and slotEntity == entity then
             return slot
         end
     end
@@ -34,10 +35,27 @@ function showroom.getVehicleData(entity)
     end
 end
 
+local function setTargetPerms(vehicle, groups, vehicleTargets)
+    if groups then        
+        if HasPermissionGroup("switch", groups) then
+            vehicleTargets.switch[#vehicleTargets.switch+1] = vehicle
+        end
+        if HasPermissionGroup("testdrive", groups) then
+            vehicleTargets.testdrive[#vehicleTargets.testdrive+1] = vehicle
+        end
+        if HasPermissionGroup("purchase", groups) then
+            vehicleTargets.purchase[#vehicleTargets.purchase+1] = vehicle
+        end
+    else
+        vehicleTargets.switch[#vehicleTargets.switch+1] = vehicle
+        vehicleTargets.testdrive[#vehicleTargets.testdrive+1] = vehicle
+        vehicleTargets.purchase[#vehicleTargets.purchase+1] = vehicle
+    end
+end
+
 function showroom.spawnVehicles(dealer, sr)
     local vehiclesCreated = {}
     local dealerProperties = {}
-    local vehicleSlots = {}
     local vehicleTargets = {
         switch = {},
         testdrive = {},
@@ -52,24 +70,9 @@ function showroom.spawnVehicles(dealer, sr)
 
         local vehicle = CreateVehicle(info.model, loc.x, loc.y, loc.z, loc.w, false, false)
         vehiclesCreated[#vehiclesCreated+1] = vehicle
-        vehicleSlots[i] = vehicle
+        showroom.slots[#showroom.slots+1] = vehicle
 
-        if info.groups then        
-            if HasPermissionGroup("switch", info.groups) then
-                vehicleTargets.switch[#vehicleTargets.switch+1] = vehicle
-            end
-            if HasPermissionGroup("testdrive", info.groups) then
-                vehicleTargets.testdrive[#vehicleTargets.testdrive+1] = vehicle
-            end
-            if HasPermissionGroup("purchase", info.groups) then
-                vehicleTargets.purchase[#vehicleTargets.purchase+1] = vehicle
-            end
-        else
-            vehicleTargets.switch[#vehicleTargets.switch+1] = vehicle
-            vehicleTargets.testdrive[#vehicleTargets.testdrive+1] = vehicle
-            vehicleTargets.purchase[#vehicleTargets.purchase+1] = vehicle
-        end
-
+        setTargetPerms(vehicle, info.groups, vehicleTargets)
         SetVehicleDoorsLocked(vehicle, 2)
         SetVehicleOnGroundProperly(vehicle)
         FreezeEntityPosition(vehicle, true)
@@ -84,7 +87,7 @@ function showroom.spawnVehicles(dealer, sr)
         end
     end
     showroom.vehicles[dealer] = vehiclesCreated
-    TriggerEvent("ND_Dealership:createVehicleTargets", vehicleTargets, dealer, vehicleSlots)
+    TriggerEvent("ND_Dealership:createVehicleTargets", vehicleTargets, dealer)
     return dealerProperties
 end
 
@@ -101,7 +104,6 @@ local function replaceCreatedVehicle(dealer, oldVehicle, newVehicle)
 end
 
 function showroom.createVehicle(selectedVehicle, dealer, index, vehicleInfo)
-    local vehicleSlots = {}
     local sr = showroom.rooms[dealer]
     local vehicleTargets = {
         switch = {},
@@ -123,22 +125,7 @@ function showroom.createVehicle(selectedVehicle, dealer, index, vehicleInfo)
     lib.requestModel(info.model)
     local vehicle = CreateVehicle(info.model, loc.x, loc.y, loc.z, loc.w, false, false)
 
-    if info.groups then        
-        if HasPermissionGroup("switch", info.groups) then
-            vehicleTargets.switch[#vehicleTargets.switch+1] = vehicle
-        end
-        if HasPermissionGroup("testdrive", info.groups) then
-            vehicleTargets.testdrive[#vehicleTargets.testdrive+1] = vehicle
-        end
-        if HasPermissionGroup("purchase", info.groups) then
-            vehicleTargets.purchase[#vehicleTargets.purchase+1] = vehicle
-        end
-    else
-        vehicleTargets.switch[#vehicleTargets.switch+1] = vehicle
-        vehicleTargets.testdrive[#vehicleTargets.testdrive+1] = vehicle
-        vehicleTargets.purchase[#vehicleTargets.purchase+1] = vehicle
-    end
-    
+    setTargetPerms(vehicle, info.groups, vehicleTargets)
     replaceCreatedVehicle(dealer, oldVehicle, vehicle)
     SetVehicleDoorsLocked(vehicle, 2)
     SetVehicleOnGroundProperly(vehicle)
@@ -147,14 +134,9 @@ function showroom.createVehicle(selectedVehicle, dealer, index, vehicleInfo)
     info.vehicle = vehicle
     local props = info.properties
     lib.setVehicleProperties(vehicle, json.decode(props))
+    showroom.slots[selectedVehicle] = vehicle
 
-    local clientVehicles = {}
-    for i=1, #sr do
-        local veh = sr[i]
-        clientVehicles[i] = veh.vehicle
-    end
-
-    TriggerEvent("ND_Dealership:createVehicleTargets", vehicleTargets, dealer, clientVehicles)
+    TriggerEvent("ND_Dealership:createVehicleTargets", vehicleTargets, dealer)
 end
 
 function showroom.createPoints()

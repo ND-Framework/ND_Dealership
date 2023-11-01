@@ -9,6 +9,9 @@ local data = {
 local function getRandomShowroomVehicle(categories)
     local category = categories[math.random(1, #categories)]
     local categoryVehicles = data.vehicles[category]
+    if #categoryVehicles == 0 then
+        return
+    end
     return categoryVehicles[math.random(1, #categoryVehicles)]
 end
 
@@ -21,9 +24,16 @@ local function getShowrooms()
         local sr = {}
         for i=1, #showroomLocations do
             local vehicle = getRandomShowroomVehicle(info.showroomCategories or info.categories)
-            vehicle.location = showroomLocations[i]
-            vehicle.groups = info.groups
-            sr[i] = vehicle
+            if vehicle then
+                sr[#sr+1] = {
+                    model = vehicle.model,
+                    price = vehicle.price,
+                    label = vehicle.label,
+                    properties = vehicle.properties,
+                    groups = info.groups,
+                    location = showroomLocations[i]
+                }
+            end
         end
         updatedShowrooms[dealer] = sr
 
@@ -177,16 +187,22 @@ RegisterNetEvent("ND_Dealership:switchShowroomVehicle", function(selectedVehicle
     local locations = dealer.showroomLocations
     if not locations then return end
 
-    local location = dealer.showroomLocations[selectedVehicle]
+    local location = locations[selectedVehicle]
     if not location then return end
 
     local vehicleInfo = categoryVehicles[index]
     if not vehicleInfo then return end
-    
-    vehicleInfo.location = location
-    vehicleInfo.properties = properties
-    showrooms[dealership][selectedVehicle] = vehicleInfo
-    TriggerClientEvent("ND_Dealership:updateShowroomVehicle", -1, selectedVehicle, dealership, index, vehicleInfo)
+
+    local info = {
+        model = vehicleInfo.model,
+        price = vehicleInfo.price,
+        label = vehicleInfo.label,
+        properties = vehicleInfo.properties or properties,
+        location = location
+    }
+
+    showRoom[selectedVehicle] = info
+    TriggerClientEvent("ND_Dealership:updateShowroomVehicle", -1, selectedVehicle, dealership, index, info)
 end)
 
 local function getVehicleCategory(dealership, model, price)
@@ -227,7 +243,6 @@ RegisterNetEvent("ND_Dealership:purchaseVehicle", function(stored, dealer, info)
 
     local player = NDCore.getPlayer(src)
     if price > 0 then
-        print(player, player.bank, price, player.bank < price)
         if not player or player.bank < price then
             return player.notify({
                 title = "insufficient funds",
@@ -246,7 +261,7 @@ RegisterNetEvent("ND_Dealership:purchaseVehicle", function(stored, dealer, info)
     if not vehicleId or not coords then
         return player.notify({
             title = "Vehicle sent to garage",
-            description = "No parking spot found, your vehice can be found in your garage.",
+            description = "No parking spot found, your vehicle can be found in your garage.",
             type = "inform",
             duration = 8000,
             position = "bottom"

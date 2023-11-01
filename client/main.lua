@@ -76,27 +76,28 @@ lib.zones.box({
     inside = Testdrive.insideZone
 })
 
-RegisterNetEvent("ND_Dealership:updateShowroomVehicle", function(selectedVehicle, dealer, index, vehicleInfo)
-    Showroom.createVehicle(selectedVehicle, dealer, index, vehicleInfo)
+RegisterNetEvent("ND_Dealership:updateShowroomVehicle", function(selected, dealer, index, vehicleInfo)
+    Showroom.createVehicle(selected, dealer, index, vehicleInfo)
 end)
 
 AddEventHandler("ND_Dealership:menuItemSelected", function(selected)
     if selected.menuType == "switch" then
-        local pedCoords = GetEntityCoords(cache.ped)
-
-        lib.requestModel(selected.model)
-        local vehicle = CreateVehicle(selected.model, pedCoords.x, pedCoords.y, pedCoords.z-50.0, 0.0, false, false)
-        while not DoesEntityExist(vehicle) do Wait(100) end
-        
-        local properties = json.encode(lib.getVehicleProperties(vehicle))
-        DeleteEntity(vehicle)
+        local properties = nil
+        if not selected.info.properties then            
+            local pedCoords = GetEntityCoords(cache.ped)
+            lib.requestModel(selected.model)
+            local vehicle = CreateVehicle(selected.model, pedCoords.x, pedCoords.y, pedCoords.z-50.0, 0.0, false, false)
+            while not DoesEntityExist(vehicle) do Wait(100) end
+            properties = json.encode(lib.getVehicleProperties(vehicle))
+            DeleteEntity(vehicle)
+        end
         TriggerServerEvent("ND_Dealership:switchShowroomVehicle", selectedVehicle, selected.dealership, selected.category, selected.index, properties)
     elseif selected.menuType == "interact" then
         pedInteract.viewVehicle(selected)
     end
 end)
 
-AddEventHandler("ND_Dealership:createVehicleTargets", function(vehicles, dealer, vehicleSlots)
+AddEventHandler("ND_Dealership:createVehicleTargets", function(vehicles, dealer)
     Target:addLocalEntity(vehicles.testdrive, {
         {
             name = "nd_dealership:showroomTestDrive",
@@ -113,7 +114,7 @@ AddEventHandler("ND_Dealership:createVehicleTargets", function(vehicles, dealer,
             label = "Switch vehicle",
             distance = 1.5,
             onSelect = function(data)
-                selectedVehicle = Showroom.getSlotFromEntity(data.entity, vehicleSlots)
+                selectedVehicle = Showroom.getSlotFromEntity(data.entity)
                 Menu.show(dealer, "switch")
             end
         }
@@ -149,3 +150,9 @@ end)
 RegisterNetEvent("ND:updateCharacter", function(character)
     updateBlips()
 end)
+
+RegisterCommand("vehprops", function(source, args, rawCommand)
+    local veh = cache.vehicle
+    if not DoesEntityExist(veh) then return end
+    lib.setClipboard(("[%S]"):format(json.encode(lib.getVehicleProperties(veh))))
+end, false)
