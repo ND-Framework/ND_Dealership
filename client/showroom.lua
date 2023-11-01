@@ -34,19 +34,6 @@ function showroom.getVehicleData(entity)
     end
 end
 
-local function hasPermissionGroup(permission, groups)
-    local player = NDCore.getPlayer(src)
-    if not player or not groups then return end
-    
-    local hasPerms = false
-    for group, info in pairs(groups) do
-        if info[permission] and player.groups[group] then
-            hasPerms = true
-        end
-    end
-    return hasPerms
-end
-
 function showroom.spawnVehicles(dealer, sr)
     local vehiclesCreated = {}
     local dealerProperties = {}
@@ -68,13 +55,13 @@ function showroom.spawnVehicles(dealer, sr)
         vehicleSlots[i] = vehicle
 
         if info.groups then        
-            if hasPermissionGroup("switch", info.groups) then
+            if HasPermissionGroup("switch", info.groups) then
                 vehicleTargets.switch[#vehicleTargets.switch+1] = vehicle
             end
-            if hasPermissionGroup("testdrive", info.groups) then
+            if HasPermissionGroup("testdrive", info.groups) then
                 vehicleTargets.testdrive[#vehicleTargets.testdrive+1] = vehicle
             end
-            if hasPermissionGroup("purchase", info.groups) then
+            if HasPermissionGroup("purchase", info.groups) then
                 vehicleTargets.purchase[#vehicleTargets.purchase+1] = vehicle
             end
         else
@@ -137,13 +124,13 @@ function showroom.createVehicle(selectedVehicle, dealer, index, vehicleInfo)
     local vehicle = CreateVehicle(info.model, loc.x, loc.y, loc.z, loc.w, false, false)
 
     if info.groups then        
-        if hasPermissionGroup("switch", info.groups) then
+        if HasPermissionGroup("switch", info.groups) then
             vehicleTargets.switch[#vehicleTargets.switch+1] = vehicle
         end
-        if hasPermissionGroup("testdrive", info.groups) then
+        if HasPermissionGroup("testdrive", info.groups) then
             vehicleTargets.testdrive[#vehicleTargets.testdrive+1] = vehicle
         end
-        if hasPermissionGroup("purchase", info.groups) then
+        if HasPermissionGroup("purchase", info.groups) then
             vehicleTargets.purchase[#vehicleTargets.purchase+1] = vehicle
         end
     else

@@ -4,6 +4,20 @@ local menu = require "client.menu"
 local selectedVehicle = nil
 Target = exports.ox_target
 
+function HasPermissionGroup(permission, groups)
+    local player = NDCore.getPlayer()
+    if not player then return end
+    if not groups then return true end
+    
+    local hasPerms = false
+    for group, info in pairs(groups) do
+        if info[permission] and player.groups[group] then
+            hasPerms = true
+        end
+    end
+    return hasPerms
+end
+
 lib.zones.box({
     name = "testdrivezone",
     coords = vec3(-1984.0, 1111.0, -23.0),
