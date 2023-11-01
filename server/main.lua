@@ -200,6 +200,19 @@ local function getVehicleCategory(dealership, model, price)
     end
 end
 
+local function getAvailableParking(spawns)
+    local vehicles = GetAllVehicles()
+    for _, vehicle in ipairs(vehicles) do
+        local coords = GetEntityCoords(vehicle)
+        for i=1, #spawns do
+            local spawn = spawns[i]
+            if #(coords-spawn) > 2 then
+                return spawn
+            end
+        end
+    end
+end
+
 RegisterNetEvent("ND_Dealership:purchaseVehicle", function(stored, dealer, info)
     local src = source
     if not hasPermissionGroup(src, "purchase", dealer) then return end
@@ -229,7 +242,7 @@ RegisterNetEvent("ND_Dealership:purchaseVehicle", function(stored, dealer, info)
 
     local vehicleId = NDCore.setVehicleOwned(player.id, json.decode(properties), true)
     local spawns = dealership.spawns
-    local coords = spawns and spawns[math.random(1, #spawns)]
+    local coords = spawns and getAvailableParking(spawns)
     if not vehicleId or not coords then
         return player.notify({
             title = "Vehicle sent to garage",
