@@ -5,6 +5,7 @@ Data = {
 Showroom = require "client.showroom"
 Menu = require "client.menu"
 Testdrive = require "client.testdrive"
+local pedInteract = require "client.ped"
 local selectedVehicle = nil
 Target = exports.ox_target
 
@@ -55,6 +56,8 @@ AddEventHandler("ND_Dealership:menuItemSelected", function(selected)
         local properties = json.encode(lib.getVehicleProperties(vehicle))
         DeleteEntity(vehicle)
         TriggerServerEvent("ND_Dealership:switchShowroomVehicle", selectedVehicle, selected.dealership, selected.category, selected.index, properties)
+    elseif selected.menuType == "interact" then
+        pedInteract.viewVehicle(selected)
     end
 end)
 
@@ -104,5 +107,5 @@ end)
 
 RegisterNetEvent("ND_Dealership:updateShowroomData", function(showrooms)
     Showroom.createShowrooms(showrooms)
+    pedInteract.create()
 end)
-
