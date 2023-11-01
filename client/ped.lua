@@ -126,10 +126,10 @@ function pedInteract.viewVehicle(selected)
     SetGameplayCamRelativeHeading(0.0)
     
     if selected.info.properties then
-        lib.setVehicleProperties(vehicle, selected.info.properties)
+        lib.setVehicleProperties(vehicle, json.decode(selected.info.properties))
     end
 
-    local properties = selected.info.properties or lib.getVehicleProperties(vehicle)
+    local properties = json.decode(selected.info.properties) or lib.getVehicleProperties(vehicle)
     local groups = info.groups
     local perms = {
         testdrive = HasPermissionGroup("testdrive", groups),
