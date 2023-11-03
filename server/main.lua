@@ -222,7 +222,7 @@ local function getAvailableParking(spawns)
         local coords = GetEntityCoords(vehicle)
         for i=1, #spawns do
             local spawn = spawns[i]
-            if #(coords-spawn) > 2 then
+            if #(coords-spawn.xyz) > 2 then
                 return spawn
             end
         end
