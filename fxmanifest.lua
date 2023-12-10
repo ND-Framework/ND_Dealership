@@ -23,4 +23,8 @@ shared_script {
 server_script "server/main.lua"
 client_script "client/main.lua"
 
-dependency "ND_Core"
+dependencies {
+    "ND_Core",
+    "ox_lib",
+    "ox_target"
+}
