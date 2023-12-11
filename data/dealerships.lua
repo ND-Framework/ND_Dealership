@@ -9,15 +9,6 @@ return {
             scale = 0.8,
             label = "Premium Deluxe Motorsports",
         },
-        groups = {
-            ["lspd"] = {
-                switch = true,
-                testdrive = true,
-                purchase = true,
-                interact = true,
-                blip = true
-            }
-        },
         interact = {
             pedModel = `cs_siemonyetarian`,
             pedCoords = vec4(-57.19, -1098.90, 26.42, 17.27),
