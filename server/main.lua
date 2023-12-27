@@ -97,20 +97,19 @@ end)
 
 local function hasPermissionGroup(src, permission, dealership)
     local dealer = data.dealerships[dealership]
-    if not dealer.groups then
-        return true
-    end
+    local groups = dealer.groups
+    if not groups then return true end
 
     local player = NDCore.getPlayer(src)
     if not player then return end
     
     local hasPerms = false
-    for group, info in pairs(dealer.groups) do
+    for group, info in pairs(groups) do
         if info[permission] and player.getGroup(group) then
             hasPerms = true
         end
     end
-    return hasPerms
+    return hasPerms or groups["default"] and groups["default"][permission]
 end
 
 lib.callback.register("ND_Dealership:setupTestDrive", function(src, pedModel, dealership, lastCoords)

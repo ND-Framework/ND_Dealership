@@ -29,7 +29,7 @@ function HasPermissionGroup(permission, groups)
             hasPerms = true
         end
     end
-    return hasPerms
+    return hasPerms or groups["default"] and groups["default"][permission]
 end
 
 local function clearBlips()

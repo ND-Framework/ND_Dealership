@@ -10,7 +10,7 @@ return {
             label = "Premium Deluxe Motorsports",
         },
         groups = {
-            ["lspd"] = {
+            ["default"] = {
                 switch = true,
                 testdrive = true,
                 purchase = true,
