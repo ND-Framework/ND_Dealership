@@ -4,6 +4,17 @@ return {
         { model = `police2`, price = 25000, label = "Charger" },
         { model = `police3`, price = 15000, label = "Taurus" }
     },
+    ["planes"] = {
+        { model = "velum2", price = 2000000 },
+        { model = "Shamal", price = 1200000 },
+        { model = "duster", price = 70000 },
+        { model = "luxor", price = 6500000 },
+        { model = "luxor2", price = 8900000 },
+        { model = "cuban800", price = 110000 },
+        { model = "nimbus", price = 4500000 },
+        { model = "miljet", price = 28000000 },
+        { model = "vestra", price = 2300000 },
+    },
     ["Compacts"] = {
         { model = `asbo`, price = 8000 },
         { model = `blista`, price = 16000 },

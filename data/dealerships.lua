@@ -70,5 +70,24 @@ return {
             vec4(462.81, -1019.49, 27.68, 90.90),
             vec4(462.99, -1014.55, 27.66, 91.79)
         }
+    },
+    ["LSIA Plane Dealer"] = {
+        categories = {"planes"},
+        blip = {
+            coords = vec3(-950.53, -3056.26, 13.95),
+            sprite = 523,
+            color = 3,
+            scale = 0.8,
+            label = "LSIA Plane Dealer",
+        },
+        interact = {
+            pedModel = `csb_trafficwarden`,
+            pedCoords = vec4(-950.53, -3056.26, 13.95, 62.97),
+            vehicleCoords = vec4(-964.23, -2984.09, 14.78, 59.78)
+        },
+        spawns = {
+            vec4(-964.23, -2984.09, 14.78, 59.78),
+            vec4(-1064.22, -2919.28, 14.79, 181.29)
+        }
     }
 }
