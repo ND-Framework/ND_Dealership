@@ -209,7 +209,7 @@ local function getVehicleCategory(dealership, model, price)
         for i=1, #vehicles do
             local info = vehicles[i]
             if info.model == model and info.price == price then
-                return category, info.price
+                return category, info
             end
         end
     end
@@ -237,10 +237,12 @@ RegisterNetEvent("ND_Dealership:purchaseVehicle", function(stored, dealer, info)
     local dealership = data.dealerships?[dealer]
     if not info or not model or not properties or not dealership then return end
 
-    local category, price = getVehicleCategory(dealership, model, info.price)
+    local category, categoryInfo = getVehicleCategory(dealership, model, info.price)
     if not category or not lib.table.contains(dealership.categories, category) then return end
 
+    local price = categoryInfo.price
     local player = NDCore.getPlayer(src)
+    
     if price > 0 then
         if not player or player.bank < price then
             return player.notify({
@@ -254,7 +256,12 @@ RegisterNetEvent("ND_Dealership:purchaseVehicle", function(stored, dealer, info)
         player.deductMoney("bank", price, "Vehicle purchase")
     end
 
-    local vehicleId = NDCore.setVehicleOwned(player.id, json.decode(properties), true)
+    local vehicleProps = json.decode(properties)
+    if categoryInfo.callsign then
+        vehicleProps.callsign = true
+    end
+
+    local vehicleId = NDCore.setVehicleOwned(player.id, vehicleProps, true)
     local spawns = dealership.spawns
     local coords = spawns and getAvailableParking(spawns)
     if not vehicleId or not coords then

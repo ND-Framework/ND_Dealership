@@ -49,11 +49,16 @@ local function getDealerVehicles(categoryVehicles)
             goto skip
         end
 
+        local index = #values+1
         if vehicleInfo.label then
             AddTextEntryByHash(model, vehicleInfo.label)
-            values[#values+1] = vehicleInfo.label
-        else
-            values[#values+1] = getVehicleLabel(model)
+            values[index] = vehicleInfo.label
+        elseif not vehicleInfo.menuLabel then
+            values[index] = getVehicleLabel(model)
+        end
+
+        if vehicleInfo.menuLabel then
+            values[index] = vehicleInfo.menuLabel
         end
         ::skip::
     end
