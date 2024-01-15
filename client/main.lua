@@ -154,5 +154,5 @@ end)
 RegisterCommand("vehprops", function(source, args, rawCommand)
     local veh = cache.vehicle
     if not DoesEntityExist(veh) then return end
-    lib.setClipboard(("[[%S]]"):format(json.encode(lib.getVehicleProperties(veh))))
+    lib.setClipboard(("[[%s]]"):format(json.encode(lib.getVehicleProperties(veh))))
 end, false)
