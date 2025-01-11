@@ -18,9 +18,15 @@ function PurchaseVehicle(dealer, info)
         if not input or not info then return end
         TriggerServerEvent("ND_Dealership:purchaseVehicle", input[1], dealer, info)
     else
+        lib.notify({
+            title = "Dealership",
+            description = "Couldn't get Vehicle Data, Try a Different Vehicle!",
+            type = "error"
+        })
         error("Couldn't get vehicle info, try a different vehicle.") -- User Friendly Error Message
     end
 end
+
 
 function HasPermissionGroup(permission, groups)
     local player = NDCore.getPlayer()
